@@ -1,6 +1,8 @@
 import 'package:paciente_app/features/auth/presentation/provider/login_provider.dart';
 import 'package:paciente_app/features/auth/presentation/screen/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:paciente_app/features/create_account/presentation/provider/patient_provider.dart';
+import 'package:paciente_app/features/home/presentation/provider/home_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -17,16 +19,20 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<LoginProvider>(
           create: (_) => LoginProvider(),
         ),
+        ChangeNotifierProvider(create: (_) => PatientProvider()),
+        ChangeNotifierProvider(create: (_) => HomeProvider()),
       ],
       child: MaterialApp(
         title: 'Onco 360',
-        theme: ThemeData(primarySwatch: Colors.blue),
+        theme: ThemeData(primaryColor: Color(0xFF5B6BF5)),
+        debugShowCheckedModeBanner: false,
 
         // El builder se aplica a TODAS las pantallas
         builder: (context, child) {
           return Scaffold(
             // Fondo morado para toda la app
-            backgroundColor: const Color(0xFF4F47C2),
+            //backgroundColor: const Color(0xFF4F47C2),
+            backgroundColor: const Color.fromARGB(255, 255, 255, 255),
 
             // Centra el contenido y fija un ancho máximo
             body: Center(

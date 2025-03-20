@@ -1,33 +1,109 @@
-// lib/core/data/models/patient_model.dart
-
 class PatientModel {
-  final String id;
-  final String nombre;
-  final String apellido;
-  final int edad;
-  final String genero;
+  String? nombre;
+  String? apellidoPaterno;
+  String? apellidoMaterno;
+  String? genero;
+  DateTime? fechaNacimiento;
+  String? telefono;
 
-  /// Diagnóstico principal o actual
-  final String diagnosticoActual;
+  String? correo;
+  String? password;
 
-  /// Lista de diagnósticos previos
-  final List<String> diagnosticosPrevios;
+  // Datos médicos
+  String? diagnostico;
+  String? grado;
+  String? restriccionesAlimentacion;
+  String? otrasEnfermedades;
+  double? talla;
+  double? peso;
 
-  /// Lista de tratamientos/medicamentos actuales
-  final List<String> tratamientos;
+  // Seguro y centro
+  String? tipoSeguro;
+  String? centroTratamiento;
 
-  /// Notas médicas, evolución, comentarios, etc.
-  final List<String> notasMedicas;
+  // Datos familiar
+  String? nombreFamiliar;
+  String? relacionFamiliar;
+  String? numeroEmergencia;
+
+  // Para checkbox de términos
+  bool aceptoTerminos;
 
   PatientModel({
-    required this.id,
-    required this.nombre,
-    required this.apellido,
-    required this.edad,
-    required this.genero,
-    required this.diagnosticoActual,
-    required this.diagnosticosPrevios,
-    required this.tratamientos,
-    required this.notasMedicas,
+    this.nombre,
+    this.apellidoPaterno,
+    this.apellidoMaterno,
+    this.genero,
+    this.fechaNacimiento,
+    this.telefono,
+    this.correo,
+    this.password,
+    this.diagnostico,
+    this.grado,
+    this.restriccionesAlimentacion,
+    this.otrasEnfermedades,
+    this.talla,
+    this.peso,
+    this.tipoSeguro,
+    this.centroTratamiento,
+    this.nombreFamiliar,
+    this.relacionFamiliar,
+    this.numeroEmergencia,
+    this.aceptoTerminos = false,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'nombre': nombre,
+      'apellidoPaterno': apellidoPaterno,
+      'apellidoMaterno': apellidoMaterno,
+      'genero': genero,
+      'fechaNacimiento': fechaNacimiento?.toIso8601String(),
+      'telefono': telefono,
+      'correo': correo,
+      'password': password,
+      'diagnostico': diagnostico,
+      'grado': grado,
+      'restriccionesAlimentacion': restriccionesAlimentacion,
+      'otrasEnfermedades': otrasEnfermedades,
+      'talla': talla,
+      'peso': peso,
+      'tipoSeguro': tipoSeguro,
+      'centroTratamiento': centroTratamiento,
+      'nombreFamiliar': nombreFamiliar,
+      'relacionFamiliar': relacionFamiliar,
+      'numeroEmergencia': numeroEmergencia,
+      'aceptoTerminos': aceptoTerminos,
+    };
+  }
+
+  factory PatientModel.fromMap(Map<String, dynamic> map) {
+    DateTime? fecha;
+    if (map['fechaNacimiento'] != null) {
+      fecha = DateTime.tryParse(map['fechaNacimiento']);
+    }
+
+    return PatientModel(
+      nombre: map['nombre'],
+      apellidoPaterno: map['apellidoPaterno'],
+      apellidoMaterno: map['apellidoMaterno'],
+      genero: map['genero'],
+      fechaNacimiento: fecha,
+      telefono: map['telefono'],
+      correo: map['correo'],
+      password: map['password'],
+      diagnostico: map['diagnostico'],
+      grado: map['grado'],
+      restriccionesAlimentacion: map['restriccionesAlimentacion'],
+      otrasEnfermedades: map['otrasEnfermedades'],
+      talla: map['talla'] != null ? (map['talla'] as num).toDouble() : null,
+      peso: map['peso'] != null ? (map['peso'] as num).toDouble() : null,
+      tipoSeguro: map['tipoSeguro'],
+      centroTratamiento: map['centroTratamiento'],
+      nombreFamiliar: map['nombreFamiliar'],
+      relacionFamiliar: map['relacionFamiliar'],
+      numeroEmergencia: map['numeroEmergencia'],
+      aceptoTerminos: map['aceptoTerminos'] ?? false,
+    );
+  }
 }

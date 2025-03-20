@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paciente_app/core/data/services/credential_service.dart';
+import 'package:paciente_app/core/data/services/patient_local_service.dart';
+import 'package:paciente_app/core/data/models/patient_model.dart';
 
 class LoginProvider extends ChangeNotifier {
   final TextEditingController emailController = TextEditingController();
@@ -14,11 +16,16 @@ class LoginProvider extends ChangeNotifier {
   bool _rememberMe = false;
   bool get rememberMe => _rememberMe;
 
+  // Aquí inyectamos ambos servicios
   final CredentialService _credentialService = CredentialService();
+  final PatientLocalService _patientLocalService = PatientLocalService();
+
+  // Para mostrar un mensaje de error en la UI
+  String? _errorMessage;
+  String? get errorMessage => _errorMessage;
 
   LoginProvider() {
-    // Al iniciar, puedes intentar recuperar credenciales guardadas
-    _loadStoredCredentials();
+    _loadStoredCredentials(); // Carga credenciales "recordadas"
   }
 
   void togglePasswordVisibility() {
@@ -33,26 +40,40 @@ class LoginProvider extends ChangeNotifier {
 
   Future<void> login() async {
     _isLoading = true;
+    _errorMessage = null; // Resetear error
     notifyListeners();
 
-    // Aquí simulas un delay como si fuera una llamada a un backend
-    await Future.delayed(const Duration(seconds: 2));
+    // Simulamos una llamada a backend con un delay
+    await Future.delayed(const Duration(seconds: 1));
 
-    // Simulación: validación exitosa
-    if (_rememberMe) {
-      await _credentialService.storeCredentials(
-        emailController.text,
-        passwordController.text,
-      );
+    // 1. Obtenemos el patient guardado
+    final PatientModel? storedPatient = await _patientLocalService.getPatient();
+
+    // 2. Validamos
+    if (storedPatient == null) {
+      // No existe ningún registro previo
+      _errorMessage = "No hay una cuenta registrada en este dispositivo.";
     } else {
-      // Si no se desea recordar, limpiamos
-      await _credentialService.clearCredentials();
+      final enteredEmail = emailController.text.trim();
+      final enteredPassword = passwordController.text.trim();
+
+      if (enteredEmail == storedPatient.correo && enteredPassword == storedPatient.password) {
+        // Credenciales válidas
+        // Si se eligió "Recordar", guardamos en CredentialService
+        if (_rememberMe) {
+          await _credentialService.storeCredentials(enteredEmail, enteredPassword);
+        } else {
+          await _credentialService.clearCredentials();
+        }
+        // ÉXITO: aquí puedes navegar o hacer algo adicional
+      } else {
+        // Credenciales inválidas
+        _errorMessage = "Correo o contraseña incorrectos.";
+      }
     }
 
     _isLoading = false;
     notifyListeners();
-
-    // Aquí podrías hacer la navegación o callback
   }
 
   Future<void> _loadStoredCredentials() async {

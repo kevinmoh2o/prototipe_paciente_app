@@ -1,3 +1,5 @@
+import 'package:paciente_app/core/data/models/category_model.dart';
+import 'package:paciente_app/core/data/models/doctor_model.dart';
 import 'package:paciente_app/core/data/models/patient_model.dart';
 import 'package:paciente_app/core/data/models/schedule_model.dart';
 import 'package:paciente_app/core/data/models/schedule_slot_model.dart';
@@ -28,7 +30,16 @@ class AppConstants {
 
   static const List<String> genders = ['Masculino', 'Femenino'];
 
-  // Lista de instituciones médicas en Perú
+  static const List<String> insuranceTypes = [
+    'SIS (Seguro Integral de Salud)',
+    'EsSalud',
+    'EPS',
+    'Seguro Privado',
+    'Particular',
+    'Otros',
+  ];
+
+  // Lista de instituciones médicas en Perú (centros de tratamiento)
   static const List<String> medicalInstitutionsPeru = [
     'Instituto Nacional de Enfermedades Neoplásicas (INEN)',
     'Hospital Nacional Edgardo Rebagliati Martins',
@@ -142,51 +153,6 @@ class AppConstants {
     },
   ];
 
-  static final List<PatientModel> samplePatients = [
-    PatientModel(
-      id: 'P001',
-      nombre: 'María',
-      apellido: 'Pérez',
-      edad: 45,
-      genero: 'Femenino',
-      diagnosticoActual: 'Cáncer de Mama',
-      diagnosticosPrevios: ['Quiste mamario benigno (2018)'],
-      tratamientos: ['Quimioterapia (Ciclo 2 de 6)', 'Anastrozol'],
-      notasMedicas: [
-        'Paciente responde bien al tratamiento inicial.',
-        'Próxima cita en 2 semanas.',
-      ],
-    ),
-    PatientModel(
-      id: 'P002',
-      nombre: 'Carlos',
-      apellido: 'González',
-      edad: 60,
-      genero: 'Masculino',
-      diagnosticoActual: 'Cáncer de Próstata',
-      diagnosticosPrevios: ['Hiperplasia prostática benigna (2020)'],
-      tratamientos: ['Radioterapia', 'Bicalutamida'],
-      notasMedicas: [
-        'Recomendada dieta baja en grasas.',
-        'Seguimiento mensual, revisión de PSA.',
-      ],
-    ),
-    PatientModel(
-      id: 'P003',
-      nombre: 'Lucía',
-      apellido: 'Ramírez',
-      edad: 37,
-      genero: 'Femenino',
-      diagnosticoActual: 'Leucemia Linfoblástica Aguda',
-      diagnosticosPrevios: [],
-      tratamientos: ['Quimioterapia intensiva', 'Corticoides'],
-      notasMedicas: [
-        'Ingresada para el segundo ciclo de quimioterapia.',
-        'Monitorizar recuento de células sanguíneas.',
-      ],
-    ),
-  ];
-
   static final List<ScheduleModel> sampleSchedules = [
     ScheduleModel(
       dayOfWeek: "Lunes",
@@ -238,5 +204,52 @@ class AppConstants {
     '¿En qué ciudad naciste?',
     '¿Cuál fue tu primera escuela?',
     '¿Cuál es el segundo nombre de tu madre?',
+  ];
+
+  static final List<CategoryModel> homeCategories = [
+    CategoryModel(
+      title: "Medicamentos",
+      iconPath: "assets/icons/pills.png",
+      description: "Control y prescripción",
+    ),
+    CategoryModel(
+      title: "Apoyo Psicológico",
+      iconPath: "assets/icons/psychology.png",
+      description: "Orientación y soporte",
+    ),
+    CategoryModel(
+      title: "Nutrición y Aptitud",
+      iconPath: "assets/icons/nutrition.png",
+      description: "Plan alimenticio y ejercicio",
+    ),
+    CategoryModel(
+      title: "Telemedicina",
+      iconPath: "assets/icons/telemedicine.png",
+      description: "Consultas en línea",
+    ),
+  ];
+
+  static final List<DoctorModel> topDoctors = [
+    DoctorModel(
+      name: "Dra. Olivia Valdivia",
+      specialty: "Nutricionista",
+      rating: 4.9,
+      reviewsCount: 37,
+      profileImage: "assets/images/doctor_female_1.png",
+    ),
+    DoctorModel(
+      name: "Dr. Jonathan Rodríguez",
+      specialty: "Psicólogo",
+      rating: 4.8,
+      reviewsCount: 29,
+      profileImage: "assets/images/doctor_male_1.png",
+    ),
+    DoctorModel(
+      name: "Dra. Melissa Suárez",
+      specialty: "Oncóloga",
+      rating: 4.7,
+      reviewsCount: 45,
+      profileImage: "assets/images/doctor_female_2.png",
+    ),
   ];
 }

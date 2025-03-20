@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:paciente_app/features/home/presentation/screen/home_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:paciente_app/features/auth/presentation/provider/login_provider.dart';
+import 'package:paciente_app/features/create_account/presentation/screen/main_form_create_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -11,7 +13,7 @@ class LoginScreen extends StatelessWidget {
     final loginProv = Provider.of<LoginProvider>(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF4F47C2),
+      backgroundColor: const Color(0xFF5B6BF5),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Center(
@@ -27,9 +29,9 @@ class LoginScreen extends StatelessWidget {
                   ),
 
                   const SizedBox(height: 16),
-                  // Título principal enfocado en pacientes
+                  // Título principal
                   Text(
-                    'Para Pacientes',
+                    'Pacientes',
                     style: GoogleFonts.emblemaOne(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -144,7 +146,20 @@ class LoginScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 8),
+
+                        // Mostrar error si existe
+                        if (loginProv.errorMessage != null)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Text(
+                              loginProv.errorMessage!,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
 
                         // Botón INICIAR SESIÓN
                         SizedBox(
@@ -154,10 +169,20 @@ class LoginScreen extends StatelessWidget {
                                 ? null
                                 : () async {
                                     await loginProv.login();
-                                    // TODO: Navegación tras login exitoso
+                                    // Si login es exitoso (errorMessage == null),
+                                    // podrías navegar a otra pantalla
+
+                                    if (loginProv.errorMessage == null) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => const HomeScreen(),
+                                        ),
+                                      );
+                                    }
                                   },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF4F47C2),
+                              backgroundColor: const Color(0xFF5B6BF5),
                               foregroundColor: Colors.white,
                               textStyle: const TextStyle(fontSize: 16),
                               shape: RoundedRectangleBorder(
@@ -207,7 +232,12 @@ class LoginScreen extends StatelessWidget {
                         Center(
                           child: GestureDetector(
                             onTap: () {
-                              // TODO: Navegar a pantalla de registro
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const MainFormCreateScreen(),
+                                ),
+                              );
                             },
                             child: Text(
                               '¿No tienes cuenta? Crea una nueva cuenta',
