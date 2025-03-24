@@ -66,6 +66,7 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/payment/
     - assets/images/logo.svg
   # assets:
   #   - images/a_dot_burr.jpeg

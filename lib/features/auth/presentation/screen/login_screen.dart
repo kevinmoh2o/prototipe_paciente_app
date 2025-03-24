@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:paciente_app/features/home/presentation/screen/home_screen.dart';
+import 'package:paciente_app/features/main_navigation/screen/main_navigation_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:paciente_app/features/auth/presentation/provider/login_provider.dart';
 import 'package:paciente_app/features/create_account/presentation/screen/main_form_create_screen.dart';
@@ -176,7 +177,7 @@ class LoginScreen extends StatelessWidget {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (_) => const HomeScreen(),
+                                          builder: (_) => const MainNavigationScreen(),
                                         ),
                                       );
                                     }

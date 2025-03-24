@@ -3,6 +3,7 @@ import 'package:paciente_app/features/auth/presentation/screen/login_screen.dart
 import 'package:flutter/material.dart';
 import 'package:paciente_app/features/create_account/presentation/provider/patient_provider.dart';
 import 'package:paciente_app/features/home/presentation/provider/home_provider.dart';
+import 'package:paciente_app/features/menu_calendar/presentation/provider/calendar_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(create: (_) => PatientProvider()),
         ChangeNotifierProvider(create: (_) => HomeProvider()),
+        ChangeNotifierProvider(create: (_) => CalendarProvider()),
       ],
       child: MaterialApp(
         title: 'Onco 360',
