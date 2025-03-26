@@ -1,8 +1,10 @@
 import 'package:paciente_app/features/auth/presentation/provider/login_provider.dart';
 import 'package:paciente_app/features/auth/presentation/screen/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:paciente_app/features/cart/presentation/provider/cart_provider.dart';
 import 'package:paciente_app/features/create_account/presentation/provider/patient_provider.dart';
 import 'package:paciente_app/features/home/presentation/provider/home_provider.dart';
+import 'package:paciente_app/features/medication/presentation/provider/medication_provider.dart';
 import 'package:paciente_app/features/menu_calendar/presentation/provider/calendar_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -23,6 +25,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => PatientProvider()),
         ChangeNotifierProvider(create: (_) => HomeProvider()),
         ChangeNotifierProvider(create: (_) => CalendarProvider()),
+        ChangeNotifierProvider(create: (_) => MedicationProvider()),
+        ChangeNotifierProvider(create: (_) => CartProvider()),
       ],
       child: MaterialApp(
         title: 'Onco 360',

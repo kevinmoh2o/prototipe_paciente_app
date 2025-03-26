@@ -44,4 +44,12 @@ class PatientProvider extends ChangeNotifier {
     _currentPatient = patient;
     notifyListeners();
   }
+
+  void setActivePlan(String planName) async {
+    await loadPatient();
+    //print(_patient.toString());
+    _patient.activePlan = planName;
+    notifyListeners();
+    savePatient();
+  }
 }

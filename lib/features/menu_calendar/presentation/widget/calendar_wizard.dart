@@ -204,7 +204,7 @@ class _HourGrid extends StatelessWidget {
         crossAxisCount: 3,
         mainAxisSpacing: 8,
         crossAxisSpacing: 8,
-        childAspectRatio: 2.5,
+        childAspectRatio: 3.5,
       ),
       itemBuilder: (context, index) {
         final slot = displaySlots[index];
@@ -397,7 +397,7 @@ class _StepDoctor extends StatelessWidget {
                       border: Border.all(
                         color: isSelected ? kPrimaryColor : Colors.grey[300]!,
                       ),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
                       children: [

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:paciente_app/features/auth/presentation/screen/login_screen.dart';
 import 'package:paciente_app/features/profile/presentation/widgets/change_password_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:paciente_app/features/create_account/presentation/provider/patient_provider.dart';
@@ -259,9 +260,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 TextButton(
                   onPressed: () {
-                    prov.clearPatient();
+                    //prov.clearPatient();
                     // Podrías ir al login screen
-                    Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+                    //Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const LoginScreen(),
+                      ),
+                    );
                   },
                   child: const Text("Cerrar Sesión", style: TextStyle(color: Colors.red)),
                 ),

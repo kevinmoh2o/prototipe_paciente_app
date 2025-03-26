@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:paciente_app/features/cart/presentation/screen/cart_screen.dart';
 import 'package:paciente_app/features/home/presentation/screen/home_screen.dart';
 import 'package:paciente_app/features/menu_calendar/presentation/screen/calendar_screen.dart';
+import 'package:paciente_app/features/planes/presentation/screen/planes_screen.dart';
 import 'package:paciente_app/features/profile/presentation/screens/profile_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
@@ -16,8 +18,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   final List<Widget> _screens = [
     const HomeScreen(), // index=0
     const CalendarScreen(), // index=1
-    const _PlansScreen(), // index=2 (placeholder)
+    const PlanesScreen(), // index=2 (placeholder)
     const ProfileScreen(), // index=3 (placeholder)
+    const CartScreen(), // index=4
   ];
 
   @override
@@ -50,19 +53,12 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             icon: Icon(Icons.person),
             label: "Perfil",
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart),
+            label: "Carrito",
+          ),
         ],
       ),
-    );
-  }
-}
-
-class _PlansScreen extends StatelessWidget {
-  const _PlansScreen();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: Text("Pantalla de Planes (placeholder)")),
     );
   }
 }

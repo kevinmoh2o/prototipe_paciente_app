@@ -13,17 +13,20 @@ class CalendarScreen extends StatelessWidget {
     final cp = Provider.of<CalendarProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(
+      /* appBar: AppBar(
         automaticallyImplyLeading: false, // sin flecha
         title: const Text("Calendario"),
         backgroundColor: kPrimaryColor,
         centerTitle: true,
-      ),
+      ), */
       body: Column(
         children: [
           // Calendario
           Container(
-            color: kPrimaryColor,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20.0), bottomRight: Radius.circular(20.0)),
+              color: kPrimaryColor,
+            ),
             child: MiniCalendar(
               selectedDate: cp.selectedDate,
               onSelectDate: cp.selectDate,

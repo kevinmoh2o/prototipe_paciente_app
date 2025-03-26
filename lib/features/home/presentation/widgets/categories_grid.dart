@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:paciente_app/core/data/models/category_model.dart';
+import 'package:paciente_app/features/medication/presentation/screen/medication_screen.dart';
 
 class CategoriesGrid extends StatelessWidget {
   final List<CategoryModel> categories;
@@ -34,7 +35,15 @@ class _CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // TODO: Navegar o abrir detalles de categoría
+        print(category.title);
+        if (category.title == "Medicamentos") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const MedicationScreen(),
+            ),
+          );
+        }
       },
       child: Container(
         decoration: BoxDecoration(

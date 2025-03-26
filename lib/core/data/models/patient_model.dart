@@ -28,6 +28,7 @@ class PatientModel {
 
   // Para checkbox de términos
   bool aceptoTerminos;
+  String? activePlan;
 
   PatientModel({
     this.nombre,
@@ -50,6 +51,7 @@ class PatientModel {
     this.relacionFamiliar,
     this.numeroEmergencia,
     this.aceptoTerminos = false,
+    this.activePlan = '',
   });
 
   Map<String, dynamic> toMap() {
@@ -74,6 +76,7 @@ class PatientModel {
       'relacionFamiliar': relacionFamiliar,
       'numeroEmergencia': numeroEmergencia,
       'aceptoTerminos': aceptoTerminos,
+      'activePlan': activePlan,
     };
   }
 
@@ -104,6 +107,12 @@ class PatientModel {
       relacionFamiliar: map['relacionFamiliar'],
       numeroEmergencia: map['numeroEmergencia'],
       aceptoTerminos: map['aceptoTerminos'] ?? false,
+      activePlan: map['activePlan'],
     );
+  }
+
+  @override
+  String toString() {
+    return 'PatientModel(nombre: $nombre, apellidoPaterno: $apellidoPaterno, apellidoMaterno: $apellidoMaterno, genero: $genero, fechaNacimiento: $fechaNacimiento, telefono: $telefono, correo: $correo, password: $password, diagnostico: $diagnostico, grado: $grado, restriccionesAlimentacion: $restriccionesAlimentacion, otrasEnfermedades: $otrasEnfermedades, talla: $talla, peso: $peso, tipoSeguro: $tipoSeguro, centroTratamiento: $centroTratamiento, nombreFamiliar: $nombreFamiliar, relacionFamiliar: $relacionFamiliar, numeroEmergencia: $numeroEmergencia, aceptoTerminos: $aceptoTerminos, activePlan: $activePlan)';
   }
 }

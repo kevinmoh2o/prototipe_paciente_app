@@ -1,8 +1,10 @@
 import 'package:paciente_app/core/data/models/category_model.dart';
 import 'package:paciente_app/core/data/models/doctor_model.dart';
-import 'package:paciente_app/core/data/models/patient_model.dart';
+import 'package:paciente_app/core/data/models/plan_data_model.dart';
 import 'package:paciente_app/core/data/models/schedule_model.dart';
 import 'package:paciente_app/core/data/models/schedule_slot_model.dart';
+import 'package:paciente_app/features/planes/data/models/plan_model.dart';
+import 'package:paciente_app/features/planes/presentation/screen/planes_screen.dart';
 
 class AppConstants {
   static const List<String> specialties = [
@@ -393,6 +395,75 @@ class AppConstants {
       rating: 4.6,
       reviewsCount: 24,
       profileImage: "assets/images/doctor_male_10.png",
+    ),
+  ];
+
+  static final List<PlanModel> samplePlans = [
+    PlanModel(
+      title: "Paquete Integral",
+      price: 175.0,
+      discount: 0.23, // 23%
+      description: "Acceso a todos los paquetes: Medicamentos, Telemedicina, Apoyo Psicológico y Nutrición/Aptitud Física.",
+      benefits: ["Consultas de telemedicina ilimitadas", "Medicamentos con descuentos", "Apoyo psicológico 24/7", "Nutrición y aptitud física"],
+    ),
+    PlanModel(
+      title: "Paquete Telemedicina",
+      price: 70.0,
+      description: "Consultas de telemedicina con especialistas oncológicos.",
+      discount: 0.10, // 10%
+      benefits: ["Consultas médicas virtuales", "Soporte oncológico prioritario"],
+    ),
+    PlanModel(
+      title: "Paquete Apoyo Psicológico",
+      price: 50.0,
+      discount: 0.23,
+      description: "Acceso a consultas de apoyo psicológico y espiritual",
+      benefits: ["Sesiones de psicología oncológica", "Terapia grupal virtual"],
+    ),
+    PlanModel(
+      title: "Paquete Nutrición y Aptitud Física",
+      price: 50.0,
+      discount: 0.23,
+      description: "Acceso a consultas de nutrición y programas de aptitud física",
+      benefits: [
+        "Planes de alimentación oncológica",
+        "Rutinas adaptadas",
+      ],
+    )
+  ];
+
+  // LiAsta de planes interna
+  static final List<PlanData> plans = [
+    PlanData(
+      title: "Paquete Integral",
+      price: 175.0,
+      discount: 0.23,
+      description: "Acceso a todos los paquetes: Medicamentos, Telemedicina, Apoyo Psicológico y Nutrición/Aptitud Física.",
+      benefits: ["Consultas de telemedicina ilimitadas", "Medicamentos con descuentos", "Apoyo psicológico 24/7", "Nutrición y aptitud física"],
+    ),
+    PlanData(
+      title: "Paquete Telemedicina",
+      price: 70.0,
+      discount: 0.10,
+      description: "Consultas virtuales con especialistas oncológicos.",
+      benefits: ["Consultas médicas virtuales", "Soporte oncológico prioritario"],
+    ),
+    PlanData(
+      title: "Paquete Apoyo Psicológico",
+      price: 50.0,
+      discount: 0.23,
+      description: "Acceso a consultas de apoyo psicológico y espiritual",
+      benefits: ["Sesiones de psicología oncológica", "Terapia grupal virtual"],
+    ),
+    PlanData(
+      title: "Paquete Nutrición y Aptitud Física",
+      price: 50.0,
+      discount: 0.23,
+      description: "Acceso a consultas de nutrición y programas de aptitud física",
+      benefits: [
+        "Planes de alimentación oncológica",
+        "Rutinas adaptadas",
+      ],
     ),
   ];
 }

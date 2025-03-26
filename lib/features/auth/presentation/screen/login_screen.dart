@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:paciente_app/features/create_account/presentation/provider/patient_provider.dart';
 import 'package:paciente_app/features/home/presentation/screen/home_screen.dart';
 import 'package:paciente_app/features/main_navigation/screen/main_navigation_screen.dart';
 import 'package:provider/provider.dart';
@@ -165,6 +166,7 @@ class LoginScreen extends StatelessWidget {
                         // Botón INICIAR SESIÓN
                         SizedBox(
                           width: double.infinity,
+                          height: 50,
                           child: ElevatedButton(
                             onPressed: loginProv.isLoading
                                 ? null
@@ -174,6 +176,8 @@ class LoginScreen extends StatelessWidget {
                                     // podrías navegar a otra pantalla
 
                                     if (loginProv.errorMessage == null) {
+                                      final patientProvider = Provider.of<PatientProvider>(context, listen: false);
+                                      await patientProvider.loadPatient();
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -195,7 +199,10 @@ class LoginScreen extends StatelessWidget {
                                 ? const CircularProgressIndicator(
                                     color: Colors.white,
                                   )
-                                : const Text('INGRESAR'),
+                                : const Text(
+                                    'INGRESAR',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                           ),
                         ),
                         const SizedBox(height: 16),

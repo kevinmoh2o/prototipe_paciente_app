@@ -57,8 +57,8 @@ class MiniCalendar extends StatelessWidget {
                   return GestureDetector(
                     onTap: () => onSelectDate(day),
                     child: Container(
-                      width: 28,
-                      height: 28,
+                      width: 35,
+                      height: 35,
                       margin: const EdgeInsets.symmetric(vertical: 4),
                       decoration: BoxDecoration(
                         color: isSelected ? Colors.white : Colors.transparent,
@@ -69,7 +69,7 @@ class MiniCalendar extends StatelessWidget {
                         "${day.day}",
                         style: TextStyle(
                           color: isSelected ? const Color(0xFF5B6BF5) : Colors.white,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w100,
                         ),
                       ),
                     ),
