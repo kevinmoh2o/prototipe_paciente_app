@@ -14,9 +14,9 @@ class CartScreen extends StatelessWidget {
     final planName = patientProv.patient.activePlan;
 
     return Scaffold(
-      appBar: AppBar(
+      /* appBar: AppBar(
         title: const Text('Carrito de Compras'),
-      ),
+      ), */
       body: items.isEmpty
           ? const Center(child: Text('Carrito vacío'))
           : Column(

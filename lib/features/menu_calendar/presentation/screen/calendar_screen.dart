@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:paciente_app/features/create_account/presentation/provider/patient_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:paciente_app/features/menu_calendar/presentation/provider/calendar_provider.dart';
 import 'package:paciente_app/features/menu_calendar/presentation/widget/mini_calendar.dart';
@@ -11,34 +12,69 @@ class CalendarScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cp = Provider.of<CalendarProvider>(context);
+    final patientProvider = Provider.of<PatientProvider>(context, listen: false);
+    final activePlan = patientProvider.patient.activePlan;
 
     return Scaffold(
-      /* appBar: AppBar(
-        automaticallyImplyLeading: false, // sin flecha
-        title: const Text("Calendario"),
-        backgroundColor: kPrimaryColor,
-        centerTitle: true,
-      ), */
-      body: Column(
+      body: Stack(
         children: [
-          // Calendario
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20.0), bottomRight: Radius.circular(20.0)),
-              color: kPrimaryColor,
-            ),
-            child: MiniCalendar(
-              selectedDate: cp.selectedDate,
-              onSelectDate: cp.selectDate,
-            ),
+          Column(
+            children: [
+              // Calendario
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(20.0),
+                    bottomRight: Radius.circular(20.0),
+                  ),
+                  color: kPrimaryColor,
+                ),
+                child: MiniCalendar(
+                  selectedDate: cp.selectedDate,
+                  onSelectDate: cp.selectDate,
+                ),
+              ),
+              // Contenido
+              Expanded(
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: cp.currentStep == CalendarFlowStep.idle ? _buildDailyAppointments(context, cp) : const CalendarWizard(),
+                ),
+              ),
+            ],
           ),
-          // Contenido
-          Expanded(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              child: cp.currentStep == CalendarFlowStep.idle ? _buildDailyAppointments(context, cp) : const CalendarWizard(),
+          // Cinta superior del plan (badge)
+          if (activePlan != null)
+            Positioned(
+              top: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: const BoxDecoration(
+                  color: Colors.amber,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(12),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.workspace_premium, color: Colors.white, size: 18),
+                    const SizedBox(width: 4),
+                    Text(
+                      activePlan,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
+
+          // Aquí puedes agregar nuevos componentes en el Stack
         ],
       ),
     );
@@ -66,7 +102,11 @@ class CalendarScreen extends StatelessWidget {
                     children: [
                       Text(
                         timeLabel,
-                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black54),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black54,
+                        ),
                       ),
                       const SizedBox(height: 4),
                       AppointmentListTile(appointment: a),
