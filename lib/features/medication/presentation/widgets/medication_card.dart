@@ -1,25 +1,37 @@
+// lib/features/medication/presentation/widgets/medication_card.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:paciente_app/features/medication/data/models/medication_model.dart';
 import 'package:paciente_app/features/cart/presentation/provider/cart_provider.dart';
+import 'package:paciente_app/features/create_account/presentation/provider/patient_provider.dart';
+import 'package:paciente_app/features/medication/data/models/medication_model.dart';
 
-class MedicationCard extends StatelessWidget {
+class MedicationCard extends StatefulWidget {
   final MedicationModel medication;
-
   const MedicationCard({Key? key, required this.medication}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final cartProv = context.read<CartProvider>();
+  State<MedicationCard> createState() => _MedicationCardState();
+}
 
-    // Calcula si hay descuento
-    final hasDiscount = medication.discountPercentage > 0;
-    final discountFactor = 1 - (medication.discountPercentage / 100);
-    final discountedPrice = (medication.price * discountFactor).toStringAsFixed(2);
+class _MedicationCardState extends State<MedicationCard> {
+  int _quantity = 1;
+
+  @override
+  Widget build(BuildContext context) {
+    final medication = widget.medication;
+    final cartProv = context.read<CartProvider>();
+    final patientProv = context.watch<PatientProvider>();
+    final activePlan = patientProv.patient.activePlan;
+
+    // Aplica descuento solo si el plan es "Paquete Integral" y discountPercentage > 0.
+    final bool hasPlanDiscount = (activePlan == "Paquete Integral") && (medication.discountPercentage > 0);
+    final discountFactor = hasPlanDiscount ? (1 - (medication.discountPercentage / 100)) : 1;
+    final discountedPrice = medication.price * discountFactor;
+
+    final bool isInStock = medication.stock > 0;
 
     return Stack(
       children: [
-        // CARD PRINCIPAL
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
           decoration: BoxDecoration(
@@ -42,7 +54,8 @@ class MedicationCard extends StatelessWidget {
                   bottomLeft: Radius.circular(12),
                 ),
                 child: Image.asset(
-                  medication.imageUrl,
+                  //medication.imageUrl,
+                  'assets/images/logo_azul.png',
                   width: 100,
                   height: 100,
                   fit: BoxFit.cover,
@@ -75,6 +88,18 @@ class MedicationCard extends StatelessWidget {
                         ),
                       ),
 
+                      const SizedBox(height: 4),
+
+                      // STOCK
+                      Text(
+                        'Stock: ${medication.stock}',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: isInStock ? Colors.green : Colors.red,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+
                       // PRESENTACIONES
                       if (medication.presentation.isNotEmpty)
                         Padding(
@@ -104,7 +129,7 @@ class MedicationCard extends StatelessWidget {
                       Row(
                         children: [
                           // Precio original (tachado) si hay descuento
-                          if (hasDiscount)
+                          if (hasPlanDiscount)
                             Text(
                               'S/ ${medication.price.toStringAsFixed(2)}',
                               style: const TextStyle(
@@ -113,16 +138,53 @@ class MedicationCard extends StatelessWidget {
                                 decoration: TextDecoration.lineThrough,
                               ),
                             ),
-                          // Espacio si hay descuento
-                          if (hasDiscount) const SizedBox(width: 8),
-                          // Precio final
+
+                          if (hasPlanDiscount) const SizedBox(width: 8),
                           Text(
-                            hasDiscount ? 'S/ $discountedPrice' : 'S/ ${medication.price.toStringAsFixed(2)}',
+                            'S/ ${discountedPrice.toStringAsFixed(2)}',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: hasDiscount ? Colors.green : Colors.blue,
+                              color: hasPlanDiscount ? Colors.green : Colors.blue,
                             ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 8),
+
+                      // Selector de cantidad
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          IconButton(
+                            onPressed: isInStock
+                                ? () {
+                                    if (_quantity > 1) {
+                                      setState(() {
+                                        _quantity--;
+                                      });
+                                    }
+                                  }
+                                : null,
+                            icon: const Icon(Icons.remove_circle_outline),
+                          ),
+                          Text(
+                            '$_quantity',
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          IconButton(
+                            onPressed: isInStock
+                                ? () {
+                                    // No exceder el stock
+                                    if (_quantity < medication.stock) {
+                                      setState(() {
+                                        _quantity++;
+                                      });
+                                    }
+                                  }
+                                : null,
+                            icon: const Icon(Icons.add_circle_outline),
                           ),
                         ],
                       ),
@@ -136,16 +198,18 @@ class MedicationCard extends StatelessWidget {
                 padding: const EdgeInsets.all(8),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: medication.isAvailable ? Colors.blue : Colors.grey,
+                    backgroundColor: isInStock ? Colors.blue : Colors.grey,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  onPressed: medication.isAvailable
+                  onPressed: isInStock
                       ? () {
-                          cartProv.addToCart(medication);
+                          cartProv.addToCart(medication, _quantity);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Agregado: ${medication.name}')),
+                            SnackBar(
+                              content: Text('Agregado: ${medication.name} x $_quantity'),
+                            ),
                           );
                         }
                       : null,
@@ -160,10 +224,34 @@ class MedicationCard extends StatelessWidget {
         ),
 
         // RIBBON DE DESCUENTO
-        if (hasDiscount) _DiscountRibbon(discount: medication.discountPercentage),
+        if (hasPlanDiscount)
+          Positioned(
+            top: 0,
+            left: 0,
+            child: ClipPath(
+              clipper: _RibbonClipper(),
+              child: Container(
+                width: 60,
+                height: 60,
+                color: Colors.red,
+                alignment: Alignment.topLeft,
+                child: const Padding(
+                  padding: EdgeInsets.only(top: 4, left: 6),
+                  child: Text(
+                    'SALE',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
 
-        // OVERLAY "NO DISPONIBLE"
-        if (!medication.isAvailable)
+        // OVERLAY "NO DISPONIBLE" si stock == 0
+        if (!isInStock)
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
@@ -186,50 +274,14 @@ class MedicationCard extends StatelessWidget {
   }
 }
 
-/// Ribbon que aparece en la esquina superior izquierda con el % de descuento
-class _DiscountRibbon extends StatelessWidget {
-  final double discount;
-  const _DiscountRibbon({Key? key, required this.discount}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final text = 'SALE\n-${discount.toStringAsFixed(0)}%';
-
-    return Positioned(
-      top: 0,
-      left: 0,
-      child: ClipPath(
-        clipper: _RibbonClipper(),
-        child: Container(
-          width: 60,
-          height: 60,
-          color: Colors.red,
-          alignment: Alignment.topLeft,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 4, left: 6),
-            child: Text(
-              text,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Crea un triángulo invertido (ribbon) en la esquina sup. izq.
+/// Clipper para el ribbon "SALE"
 class _RibbonClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
-    // Triángulo que cubre la esquina
     final path = Path();
-    path.lineTo(0, size.height); // de top-left a bottom-left
-    path.lineTo(size.width, 0); // diagonal a top-right
+    // Triángulo
+    path.lineTo(0, size.height);
+    path.lineTo(size.width, 0);
     path.close();
     return path;
   }

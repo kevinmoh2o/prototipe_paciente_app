@@ -1,5 +1,8 @@
+// lib/features/medication/presentation/screen/medication_screen.dart
 import 'package:flutter/material.dart';
+import 'package:paciente_app/features/main_navigation/screen/main_navigation_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:paciente_app/features/cart/presentation/screen/cart_screen.dart';
 import 'package:paciente_app/features/medication/presentation/provider/medication_provider.dart';
 import 'package:paciente_app/features/medication/presentation/widgets/medication_card.dart';
 
@@ -13,6 +16,18 @@ class MedicationScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Medicamentos'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.shopping_cart),
+            onPressed: () {
+              // Navega a la pantalla del carrito
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const MainNavigationScreen(currentIndex: 4,)),
+              );
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [

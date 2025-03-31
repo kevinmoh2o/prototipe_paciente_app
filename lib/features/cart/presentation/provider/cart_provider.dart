@@ -23,12 +23,12 @@ class CartProvider extends ChangeNotifier {
     return subtotal * (1 - discount);
   }
 
-  void addToCart(MedicationModel med) {
+  void addToCart(MedicationModel med, int quantity) {
     final idx = _items.indexWhere((c) => c.medication.id == med.id);
     if (idx >= 0) {
-      _items[idx].quantity++;
+      _items[idx].quantity += quantity;
     } else {
-      _items.add(CartItemModel(medication: med));
+      _items.add(CartItemModel(medication: med, quantity: quantity));
     }
     notifyListeners();
   }

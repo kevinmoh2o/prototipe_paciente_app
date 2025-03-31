@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:paciente_app/features/create_account/presentation/provider/patient_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:paciente_app/features/create_account/presentation/provider/patient_provider.dart';
 import 'package:paciente_app/features/menu_calendar/presentation/provider/calendar_provider.dart';
 import 'package:paciente_app/features/menu_calendar/presentation/widget/mini_calendar.dart';
 import 'package:paciente_app/features/menu_calendar/presentation/widget/calendar_wizard.dart';
@@ -16,65 +16,67 @@ class CalendarScreen extends StatelessWidget {
     final activePlan = patientProvider.patient.activePlan;
 
     return Scaffold(
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              // Calendario
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(20.0),
-                    bottomRight: Radius.circular(20.0),
-                  ),
-                  color: kPrimaryColor,
-                ),
-                child: MiniCalendar(
-                  selectedDate: cp.selectedDate,
-                  onSelectDate: cp.selectDate,
-                ),
-              ),
-              // Contenido
-              Expanded(
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  child: cp.currentStep == CalendarFlowStep.idle ? _buildDailyAppointments(context, cp) : const CalendarWizard(),
-                ),
-              ),
-            ],
-          ),
-          // Cinta superior del plan (badge)
+      appBar: AppBar(
+        backgroundColor: kPrimaryColor,
+        automaticallyImplyLeading: false,
+        // En vez de un Positioned, usa iconButtons o text en la AppBar
+        actions: [
           if (activePlan != null)
-            Positioned(
-              top: 0,
-              right: 0,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: const BoxDecoration(
-                  color: Colors.amber,
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(12),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.workspace_premium, color: Colors.white, size: 18),
-                    const SizedBox(width: 4),
-                    Text(
-                      activePlan,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
-                      ),
+            Container(
+              margin: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.amber,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.workspace_premium, color: Colors.white, size: 18),
+                  const SizedBox(width: 4),
+                  Text(
+                    activePlan,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
+        ],
+      ),
+      body: Column(
+        children: [
+          // Calendario
+          Container(
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20.0),
+                bottomRight: Radius.circular(20.0),
+              ),
+              color: kPrimaryColor,
+            ),
+            child: MiniCalendar(
+              // Día actual seleccionado
+              selectedDate: cp.selectedDate,
+              // Método para cambiar la fecha seleccionada
+              onSelectDate: cp.selectDate,
+              // Lista completa de citas (o lo que tengas en tu provider)
+              allAppointments: cp.allAppointments, 
+            ),
+          ),
 
-          // Aquí puedes agregar nuevos componentes en el Stack
+          // Contenido
+          Expanded(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: cp.currentStep == CalendarFlowStep.idle
+                  ? _buildDailyAppointments(context, cp)
+                  : const CalendarWizard(),
+            ),
+          ),
         ],
       ),
     );

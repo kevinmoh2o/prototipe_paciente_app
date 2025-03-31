@@ -66,6 +66,8 @@ class CalendarProvider extends ChangeNotifier {
       isTelemedicine: true,
     ),
   ];
+  List<AppointmentModel> get allAppointments => _allAppointments;
+
 
   // Retornamos solo las citas de la fecha seleccionada, ordenadas
   List<AppointmentModel> get appointmentsForSelectedDate {

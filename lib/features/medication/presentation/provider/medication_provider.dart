@@ -1,3 +1,4 @@
+// lib/features/medication/presentation/provider/medication_provider.dart
 import 'package:flutter/material.dart';
 import 'package:paciente_app/features/medication/data/models/medication_model.dart';
 import 'package:paciente_app/features/medication/data/services/medication_service.dart';
@@ -26,7 +27,9 @@ class MedicationProvider extends ChangeNotifier {
       filteredMedications = allMedications;
     } else {
       filteredMedications = allMedications
-          .where((med) => med.name.toLowerCase().contains(query.toLowerCase()) || med.description.toLowerCase().contains(query.toLowerCase()))
+          .where((med) =>
+              med.name.toLowerCase().contains(query.toLowerCase()) ||
+              med.description.toLowerCase().contains(query.toLowerCase()))
           .toList();
     }
     notifyListeners();

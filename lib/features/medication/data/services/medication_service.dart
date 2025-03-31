@@ -10,10 +10,10 @@ class MedicationService {
       description: 'Medicamento para quimioterapia...',
       price: 220.0,
       imageUrl: 'assets/meds/oxaliplatino.png',
-      isAvailable: true,
       presentation: ['100mg', '200mg'],
       pharmacy: 'Farmacia ABC',
       discountPercentage: 10.0,
+      stock: 5
     ),
     MedicationModel(
       id: '2',
@@ -21,10 +21,10 @@ class MedicationService {
       description: 'Analgésico y antipirético...',
       price: 15.0,
       imageUrl: 'assets/meds/paracetamol.png',
-      isAvailable: true,
       presentation: ['500mg', '1g', '250mg'],
       pharmacy: 'Farmacia XYZ',
       discountPercentage: 5.0,
+      stock: 15
     ),
     MedicationModel(
       id: '3',
@@ -32,10 +32,10 @@ class MedicationService {
       description: 'Usado en el tratamiento de cáncer de ovario y testicular...',
       price: 250.0,
       imageUrl: 'assets/meds/cisplatino.png',
-      isAvailable: true,
       presentation: ['50mg', '100mg'],
       pharmacy: 'Farmacia Omega',
       discountPercentage: 15.0,
+      stock: 3
     ),
     MedicationModel(
       id: '4',
@@ -43,10 +43,10 @@ class MedicationService {
       description: 'Medicamento utilizado en diversos tipos de cáncer...',
       price: 300.0,
       imageUrl: 'assets/meds/doxorrubicina.png',
-      isAvailable: true,
       presentation: ['20mg', '50mg'],
       pharmacy: 'Farmacia Delta',
       discountPercentage: 12.0,
+      stock: 4
     ),
     MedicationModel(
       id: '5',
@@ -54,10 +54,10 @@ class MedicationService {
       description: 'Tratamiento para cáncer de mama y próstata...',
       price: 350.0,
       imageUrl: 'assets/meds/docetaxel.png',
-      isAvailable: true,
       presentation: ['20mg', '80mg'],
       pharmacy: 'Farmacia Beta',
       discountPercentage: 8.0,
+      stock: 5
     ),
     MedicationModel(
       id: '6',
@@ -65,10 +65,10 @@ class MedicationService {
       description: 'Quimioterapia usada en cáncer de mama, ovario y pulmón...',
       price: 400.0,
       imageUrl: 'assets/meds/paclitaxel.png',
-      isAvailable: true,
       presentation: ['100mg', '300mg'],
       pharmacy: 'Farmacia Sigma',
       discountPercentage: 5.0,
+      stock: 8
     ),
     MedicationModel(
       id: '7',
@@ -76,10 +76,10 @@ class MedicationService {
       description: 'Usado en cáncer de piel y leucemia...',
       price: 180.0,
       imageUrl: 'assets/meds/metotrexato.png',
-      isAvailable: true,
       presentation: ['2.5mg', '5mg'],
       pharmacy: 'Farmacia Omega',
       discountPercentage: 10.0,
+      stock: 5
     ),
     MedicationModel(
       id: '8',
@@ -87,10 +87,10 @@ class MedicationService {
       description: 'Medicamento usado para leucemias y linfomas...',
       price: 220.0,
       imageUrl: 'assets/meds/vincristina.png',
-      isAvailable: true,
       presentation: ['1mg', '5mg'],
       pharmacy: 'Farmacia Alpha',
       discountPercentage: 20.0,
+      stock: 1
     ),
     MedicationModel(
       id: '9',
@@ -98,10 +98,10 @@ class MedicationService {
       description: 'Usado en cáncer colorectal y de mama...',
       price: 250.0,
       imageUrl: 'assets/meds/fluorouracilo.png',
-      isAvailable: true,
       presentation: ['500mg', '1g'],
       pharmacy: 'Farmacia Zeta',
       discountPercentage: 15.0,
+      stock: 10
     ),
     MedicationModel(
       id: '10',
@@ -109,10 +109,10 @@ class MedicationService {
       description: 'Tratamiento para cáncer de mama...',
       price: 150.0,
       imageUrl: 'assets/meds/tamoxifeno.png',
-      isAvailable: true,
       presentation: ['10mg', '20mg'],
       pharmacy: 'Farmacia Delta',
       discountPercentage: 7.0,
+      stock: 18
     ),
     MedicationModel(
       id: '11',
@@ -120,10 +120,10 @@ class MedicationService {
       description: 'Medicamento usado en cáncer de mama HER2 positivo...',
       price: 500.0,
       imageUrl: 'assets/meds/trastuzumab.png',
-      isAvailable: true,
       presentation: ['150mg', '440mg'],
       pharmacy: 'Farmacia ABC',
       discountPercentage: 12.0,
+      stock: 51
     ),
     MedicationModel(
       id: '12',
@@ -131,10 +131,10 @@ class MedicationService {
       description: 'Ayuda a reducir los efectos secundarios de la quimioterapia...',
       price: 100.0,
       imageUrl: 'assets/meds/leucovorina.png',
-      isAvailable: true,
       presentation: ['50mg', '200mg'],
       pharmacy: 'Farmacia Zeta',
       discountPercentage: 5.0,
+      stock: 26
     ),
     MedicationModel(
       id: '13',
@@ -142,10 +142,10 @@ class MedicationService {
       description: 'Tratamiento para cáncer colorectal, pulmón y riñón...',
       price: 600.0,
       imageUrl: 'assets/meds/bevacizumab.png',
-      isAvailable: true,
       presentation: ['100mg', '400mg'],
       pharmacy: 'Farmacia Beta',
       discountPercentage: 10.0,
+      stock: 23
     ),
     MedicationModel(
       id: '14',
@@ -153,10 +153,10 @@ class MedicationService {
       description: 'Medicamento utilizado en cáncer de mama HER2 positivo...',
       price: 400.0,
       imageUrl: 'assets/meds/lapatinib.png',
-      isAvailable: true,
       presentation: ['250mg', '500mg'],
       pharmacy: 'Farmacia Alpha',
       discountPercentage: 8.0,
+      stock: 19
     ),
     MedicationModel(
       id: '15',
@@ -164,10 +164,10 @@ class MedicationService {
       description: 'Tratamiento para cáncer de pulmón de células no pequeñas...',
       price: 450.0,
       imageUrl: 'assets/meds/erlotinib.png',
-      isAvailable: true,
       presentation: ['150mg', '300mg'],
       pharmacy: 'Farmacia Sigma',
       discountPercentage: 5.0,
+      stock: 0
     ),
     MedicationModel(
       id: '16',
@@ -175,10 +175,10 @@ class MedicationService {
       description: 'Usado para tratar leucemia mieloide crónica y otros tipos de cáncer...',
       price: 500.0,
       imageUrl: 'assets/meds/imatinib.png',
-      isAvailable: true,
       presentation: ['100mg', '400mg'],
       pharmacy: 'Farmacia Zeta',
       discountPercentage: 10.0,
+      stock: 2
     ),
     MedicationModel(
       id: '17',
@@ -186,10 +186,10 @@ class MedicationService {
       description: 'Tratamiento para linfoma no Hodgkin...',
       price: 350.0,
       imageUrl: 'assets/meds/rituximab.png',
-      isAvailable: true,
       presentation: ['500mg', '100mg'],
       pharmacy: 'Farmacia Omega',
       discountPercentage: 15.0,
+      stock: 44
     ),
     MedicationModel(
       id: '18',
@@ -197,10 +197,10 @@ class MedicationService {
       description: 'Quimioterapia para cáncer de mama, ovario y linfoma...',
       price: 200.0,
       imageUrl: 'assets/meds/cyclophosphamide.png',
-      isAvailable: true,
       presentation: ['100mg', '200mg'],
       pharmacy: 'Farmacia Alpha',
       discountPercentage: 5.0,
+      stock: 4
     ),
     MedicationModel(
       id: '19',
@@ -208,10 +208,10 @@ class MedicationService {
       description: 'Usado en el tratamiento del mieloma múltiple...',
       price: 450.0,
       imageUrl: 'assets/meds/bortezomib.png',
-      isAvailable: true,
       presentation: ['3.5mg', '5mg'],
       pharmacy: 'Farmacia Delta',
       discountPercentage: 20.0,
+      stock: 9
     ),
     MedicationModel(
       id: '20',
@@ -219,10 +219,10 @@ class MedicationService {
       description: 'Tratamiento para mieloma múltiple y linfoma...',
       price: 700.0,
       imageUrl: 'assets/meds/lenalidomida.png',
-      isAvailable: true,
       presentation: ['10mg', '25mg'],
       pharmacy: 'Farmacia Zeta',
       discountPercentage: 12.0,
+      stock: 1
     ),
     // ... Continue adding the remaining 30 medications following the same structure
   ];

@@ -1,3 +1,4 @@
+// lib/features/cart/data/models/cart_item_model.dart
 import 'package:paciente_app/features/medication/data/models/medication_model.dart';
 
 class CartItemModel {
