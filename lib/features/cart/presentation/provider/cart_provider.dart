@@ -9,6 +9,7 @@ class CartProvider extends ChangeNotifier {
   List<CartItemModel> get items => _items;
 
   double get subtotal => _items.fold(0.0, (sum, item) => sum + item.totalPrice);
+  int get totalItems => _items.fold(0, (sum, c) => sum + c.quantity);
 
   // Ejemplo: si el plan del paciente da 10% de descuento
   double getDiscountPercent(String? plan) {
@@ -23,6 +24,7 @@ class CartProvider extends ChangeNotifier {
     return subtotal * (1 - discount);
   }
 
+  // Agrega 'quantity' unidades del medicamento
   void addToCart(MedicationModel med, int quantity) {
     final idx = _items.indexWhere((c) => c.medication.id == med.id);
     if (idx >= 0) {
@@ -31,6 +33,11 @@ class CartProvider extends ChangeNotifier {
       _items.add(CartItemModel(medication: med, quantity: quantity));
     }
     notifyListeners();
+  }
+
+  // Retorna si el med está en el carrito
+  bool isInCart(String medicationId) {
+    return _items.any((c) => c.medication.id == medicationId);
   }
 
   void removeFromCart(String medicationId) {

@@ -33,8 +33,10 @@ migrate_working_dir/
 .pub/
 /build/
 
+/assets/icons/
 /assets/images/
 /assets/meds/
+/assets/submodules/
 
 # Symbolication related
 app.*.symbols

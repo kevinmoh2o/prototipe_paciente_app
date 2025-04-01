@@ -64,7 +64,7 @@ class CalendarScreen extends StatelessWidget {
               // Método para cambiar la fecha seleccionada
               onSelectDate: cp.selectDate,
               // Lista completa de citas (o lo que tengas en tu provider)
-              allAppointments: cp.allAppointments, 
+              allAppointments: cp.allAppointments,
             ),
           ),
 
@@ -72,9 +72,7 @@ class CalendarScreen extends StatelessWidget {
           Expanded(
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
-              child: cp.currentStep == CalendarFlowStep.idle
-                  ? _buildDailyAppointments(context, cp)
-                  : const CalendarWizard(),
+              child: cp.currentStep == CalendarFlowStep.idle ? _buildDailyAppointments(context, cp) : const CalendarWizard(),
             ),
           ),
         ],

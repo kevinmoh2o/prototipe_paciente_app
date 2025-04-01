@@ -17,8 +17,18 @@ class CartScreen extends StatelessWidget {
 
     if (items.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Carrito de Compras')),
-        body: const Center(child: Text('Carrito vacío')),
+        //appBar: //AppBar(title: const Text('Carrito de Compras')),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.remove_shopping_cart_outlined,
+              color: Colors.grey,
+              size: 50,
+            ),
+            const Center(child: Text('Carrito vacío')),
+          ],
+        ),
       );
     }
 
@@ -32,7 +42,7 @@ class CartScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Carrito de Compras')),
+      ////appBar: //AppBar(title: const Text('Carrito de Compras')),
       body: Column(
         children: [
           Expanded(

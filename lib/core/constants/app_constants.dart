@@ -215,14 +215,19 @@ class AppConstants {
       description: "Control y prescripción",
     ),
     CategoryModel(
-      title: "Apoyo Psicológico",
+      title: "Apoyo Psicológico Espiritual",
       iconPath: "assets/icons/psychology.png",
-      description: "Orientación y soporte",
+      description: "Orientación, soporte y espiritualidad",
     ),
     CategoryModel(
-      title: "Nutrición y Aptitud",
+      title: "Nutrición",
       iconPath: "assets/icons/nutrition.png",
-      description: "Plan alimenticio y ejercicio",
+      description: "Plan alimenticio y asesoría",
+    ),
+    CategoryModel(
+      title: "Aptitud Física",
+      iconPath: "assets/icons/estirado.png",
+      description: "Ejercicio y rutinas adaptadas",
     ),
     CategoryModel(
       title: "Telemedicina",
@@ -434,6 +439,13 @@ class AppConstants {
 
   // LiAsta de planes interna
   static final List<PlanData> plans = [
+    PlanData(
+      title: "Plan Básico",
+      price: 0.0, // Puede ser gratuito o con un precio simbólico
+      discount: 0.0,
+      description: "Plan básico sin acceso a los beneficios exclusivos. El usuario puede cancelar en cualquier momento.",
+      benefits: ["Acceso limitado a contenido", "Posibilidad de cancelar en cualquier momento"],
+    ),
     PlanData(
       title: "Paquete Integral",
       price: 175.0,

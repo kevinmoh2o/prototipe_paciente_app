@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:paciente_app/features/aptitud_fisica/presentation/screen/aptitud_screen.dart';
+import 'package:paciente_app/features/medication/presentation/screen/medication_screen.dart';
+import 'package:paciente_app/features/nutricion/presentation/screen/nutricion_screen.dart';
+import 'package:paciente_app/features/psicologico_espiritual/presentation/screen/psicologia_screen.dart';
+import 'package:paciente_app/features/telemedicina/presentation/screen/telemedicina_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:paciente_app/features/home/presentation/provider/home_provider.dart';
 import 'package:paciente_app/features/home/presentation/widgets/home_header.dart';
@@ -20,6 +25,13 @@ class _HomeScreenState extends State<HomeScreen> {
     Future.delayed(Duration.zero, () {
       Provider.of<HomeProvider>(context, listen: false).loadUserData(context);
     });
+  }
+
+  void _navigateTo(BuildContext context, Widget screen) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => screen),
+    );
   }
 
   @override
@@ -46,7 +58,18 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 8),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: CategoriesGrid(categories: AppConstants.homeCategories),
+                child: CategoriesGrid(
+                  categories: AppConstants.homeCategories,
+                  onTapMedicamentos: () => _navigateTo(context, const MedicationScreen()),
+                  //onTapPsicologia: () => _navigateTo(context, const PsicologiaScreen()),
+                  onTapPsicologiaEspiritual: () => _navigateTo(context, const PsicologiaScreen()),
+                  onTapNutricion: () => _navigateTo(context, const NutricionScreen()),
+                  onTapAptitud: () => _navigateTo(context, const AptitudScreen()),
+                  onTapTelemedicina: () => _navigateTo(
+                    context,
+                    const TelemedicinaScreen(),
+                  ),
+                ),
               ),
               const SizedBox(height: 16),
               Padding(

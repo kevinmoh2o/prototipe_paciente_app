@@ -1,6 +1,6 @@
-// lib/features/medication/presentation/widgets/medication_card.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:paciente_app/features/cart/presentation/provider/cart_provider.dart';
 import 'package:paciente_app/features/create_account/presentation/provider/patient_provider.dart';
 import 'package:paciente_app/features/medication/data/models/medication_model.dart';
@@ -30,6 +30,9 @@ class _MedicationCardState extends State<MedicationCard> {
 
     final bool isInStock = medication.stock > 0;
 
+    // Chequeamos si este medicamento está en el carrito
+    final bool isInCart = cartProv.isInCart(medication.id);
+
     return Stack(
       children: [
         Container(
@@ -45,6 +48,7 @@ class _MedicationCardState extends State<MedicationCard> {
               ),
             ],
           ),
+          // Contenido principal
           child: Row(
             children: [
               // IMAGEN
@@ -54,14 +58,14 @@ class _MedicationCardState extends State<MedicationCard> {
                   bottomLeft: Radius.circular(12),
                 ),
                 child: Image.asset(
-                  //medication.imageUrl,
-                  'assets/images/logo_azul.png',
+                  medication.imageUrl,
                   width: 100,
                   height: 100,
                   fit: BoxFit.cover,
                 ),
               ),
 
+              // Información
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -155,7 +159,6 @@ class _MedicationCardState extends State<MedicationCard> {
 
                       // Selector de cantidad
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           IconButton(
                             onPressed: isInStock
@@ -222,6 +225,36 @@ class _MedicationCardState extends State<MedicationCard> {
             ],
           ),
         ),
+
+        // ÍCONO DE ELIMINAR (si ya está en el carrito)
+        if (isInCart)
+          Positioned(
+            top: 4,
+            right: 4,
+            child: InkWell(
+              onTap: () {
+                cartProv.removeFromCart(medication.id);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Eliminado del carrito: ${medication.name}'),
+                  ),
+                );
+              },
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Colors.red.shade200,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.delete,
+                  size: 18,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
 
         // RIBBON DE DESCUENTO
         if (hasPlanDiscount)
