@@ -6,6 +6,7 @@ import 'package:paciente_app/features/create_account/presentation/provider/patie
 import 'package:paciente_app/features/home/presentation/provider/home_provider.dart';
 import 'package:paciente_app/features/medication/presentation/provider/medication_provider.dart';
 import 'package:paciente_app/features/menu_calendar/presentation/provider/calendar_provider.dart';
+import 'package:paciente_app/features/telemedicina/presentation/provider/telemedicina_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CalendarProvider()),
         ChangeNotifierProvider(create: (_) => MedicationProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => TelemedicinaProvider()),
       ],
       child: MaterialApp(
         title: 'Onco 360',
