@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:paciente_app/features/create_account/presentation/provider/patient_provider.dart';
 import 'package:paciente_app/features/menu_calendar/presentation/provider/calendar_provider.dart';
 import 'package:paciente_app/features/menu_calendar/presentation/widget/mini_calendar.dart';
-import 'package:paciente_app/features/menu_calendar/presentation/widget/calendar_wizard.dart';
+import 'package:paciente_app/features/menu_calendar/presentation/widget/wizard/calendar_wizard.dart';
 import 'package:paciente_app/features/menu_calendar/presentation/widget/appointment_list_tile.dart';
 
 class CalendarScreen extends StatelessWidget {
@@ -12,124 +11,92 @@ class CalendarScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cp = Provider.of<CalendarProvider>(context);
-    final patientProvider = Provider.of<PatientProvider>(context, listen: false);
-    final activePlan = patientProvider.patient.activePlan;
+    const Color kPrimaryColor = Color(0xFF5B6BF5);
 
     return Scaffold(
+      // AppBar sin leading, con color kPrimaryColor
       appBar: AppBar(
-        backgroundColor: kPrimaryColor,
         automaticallyImplyLeading: false,
-        // En vez de un Positioned, usa iconButtons o text en la AppBar
-        actions: [
-          if (activePlan != null)
-            Container(
-              margin: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.amber,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.workspace_premium, color: Colors.white, size: 18),
-                  const SizedBox(width: 4),
-                  Text(
-                    activePlan,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-        ],
+        backgroundColor: kPrimaryColor,
+        elevation: 0,
       ),
-      body: Column(
-        children: [
-          // Calendario
-          Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(20.0),
-                bottomRight: Radius.circular(20.0),
-              ),
-              color: kPrimaryColor,
-            ),
-            child: MiniCalendar(
-              // Día actual seleccionado
-              selectedDate: cp.selectedDate,
-              // Método para cambiar la fecha seleccionada
-              onSelectDate: cp.selectDate,
-              // Lista completa de citas (o lo que tengas en tu provider)
-              allAppointments: cp.allAppointments,
-            ),
-          ),
-
-          // Contenido
-          Expanded(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              child: cp.currentStep == CalendarFlowStep.idle ? _buildDailyAppointments(context, cp) : const CalendarWizard(),
-            ),
-          ),
-        ],
+      // Usamos AnimatedSwitcher para cambiar entre la vista “idle” y el wizard
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        child: cp.currentStep == CalendarFlowStep.idle
+            ? _IdleView(key: const ValueKey("IdleView"))
+            : const CalendarWizard(key: ValueKey("CalendarWizard")),
       ),
     );
   }
+}
 
-  Widget _buildDailyAppointments(BuildContext context, CalendarProvider cp) {
+/// Vista “idle”: calendario + citas + botón “Reservar Cita”
+class _IdleView extends StatelessWidget {
+  const _IdleView({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final cp = Provider.of<CalendarProvider>(context);
     final appts = cp.appointmentsForSelectedDate;
+    const Color kPrimaryColor = Color(0xFF5B6BF5);
 
     return SingleChildScrollView(
       key: const ValueKey("IdleMode"),
-      padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Sección superior: mini_calendar con color kPrimaryColor
+          Container(
+            color: kPrimaryColor,
+            child: MiniCalendar(
+              allAppointments: cp.allAppointments,
+              selectedDate: cp.selectedDate,
+              onSelectDate: (date) => cp.selectDate(date),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Lista de citas del día
           if (appts.isEmpty)
-            const Text("No tienes citas en esta fecha.", style: TextStyle(fontSize: 16))
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: Text("No tienes citas en esta fecha.", style: TextStyle(fontSize: 16)),
+            )
           else
-            Column(
-              children: appts.map((a) {
-                final timeLabel = _formatHour(a.dateTime);
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Column(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: appts.map((a) {
+                  final timeStr = _formatHour(a.dateTime);
+                  return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        timeLabel,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black54,
-                        ),
+                        timeStr,
+                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black54),
                       ),
                       const SizedBox(height: 4),
                       AppointmentListTile(appointment: a),
+                      const SizedBox(height: 12),
                     ],
-                  ),
-                );
-              }).toList(),
-            ),
-          const SizedBox(height: 24),
-          Center(
-            child: ElevatedButton(
-              onPressed: cp.startScheduling,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: kPrimaryColor,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+                  );
+                }).toList(),
               ),
-              child: const Text("Reservar Cita", style: TextStyle(fontSize: 16)),
             ),
-          )
+
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: cp.startScheduling,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: kPrimaryColor,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+            ),
+            child: const Text("Reservar Cita", style: TextStyle(fontSize: 16)),
+          ),
+          const SizedBox(height: 24),
         ],
       ),
     );

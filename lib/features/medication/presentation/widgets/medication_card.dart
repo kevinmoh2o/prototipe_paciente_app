@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:paciente_app/core/ui/alert_modal.dart';
 import 'package:provider/provider.dart';
 
 import 'package:paciente_app/features/cart/presentation/provider/cart_provider.dart';
@@ -209,10 +210,14 @@ class _MedicationCardState extends State<MedicationCard> {
                   onPressed: isInStock
                       ? () {
                           cartProv.addToCart(medication, _quantity);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Agregado: ${medication.name} x $_quantity'),
-                            ),
+                          AlertModal.showAlert(
+                            context,
+                            color: Colors.green,
+                            title: 'Agregado:',
+                            description: '${medication.name} x $_quantity',
+                            detail: 'Detalle opcional',
+                            forceDialog: false, // false => SnackBar
+                            snackbarDurationInSeconds: 5,
                           );
                         }
                       : null,
@@ -234,10 +239,14 @@ class _MedicationCardState extends State<MedicationCard> {
             child: InkWell(
               onTap: () {
                 cartProv.removeFromCart(medication.id);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Eliminado del carrito: ${medication.name}'),
-                  ),
+                AlertModal.showAlert(
+                  context,
+                  color: Colors.orange,
+                  title: 'Eliminado del carrito: ',
+                  description: medication.name,
+                  detail: 'Detalle opcional',
+                  forceDialog: false, // false => SnackBar
+                  snackbarDurationInSeconds: 5,
                 );
               },
               borderRadius: BorderRadius.circular(20),

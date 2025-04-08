@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:paciente_app/core/ui/alert_modal.dart';
 import 'package:provider/provider.dart';
 import 'package:paciente_app/core/constants/app_constants.dart';
 import 'package:paciente_app/core/data/models/plan_data_model.dart';
@@ -252,8 +253,14 @@ class _PlanesScreenState extends State<PlanesScreen> {
 
     // Si ya está suscrito a este plan
     if (activePlan != null && activePlan == planTitle) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Ya tienes el plan $planTitle")),
+      AlertModal.showAlert(
+        context,
+        color: Colors.green,
+        title: 'Ya tienes el plan : ',
+        description: planTitle,
+        detail: 'Detalle opcional',
+        forceDialog: false, // false => SnackBar
+        snackbarDurationInSeconds: 5,
       );
       return;
     }

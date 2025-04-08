@@ -1,13 +1,17 @@
+// lib/features/psicologico_espiritual/data/model/psicologia_option_model.dart
+
 class PsicologiaOptionModel {
+  final String id;
   final String title;
   final String description;
-  final String iconPath; // Ruta de ícono (asset)
-  final bool isFavorite; // Para mostrar el corazoncito
+  final String imageAsset;
+  bool isFavorite; // Manejo de "favorito"
 
   PsicologiaOptionModel({
+    required this.id,
     required this.title,
     required this.description,
-    required this.iconPath,
+    required this.imageAsset,
     this.isFavorite = false,
   });
 }

@@ -1,47 +1,67 @@
 import 'package:flutter/material.dart';
+import 'package:paciente_app/features/menu_calendar/presentation/provider/calendar_provider.dart';
 
 class HourGridSelector extends StatelessWidget {
-  final List<String> hours;
+  final DayTime? selectedDayTime;
   final String? selectedHour;
   final ValueChanged<String> onSelectHour;
 
   const HourGridSelector({
     Key? key,
-    required this.hours,
+    this.selectedDayTime,
     required this.selectedHour,
     required this.onSelectHour,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Hardcode slots
+    const morningSlots = ["8:30 AM", "9:00 AM", "9:30 AM", "10:00 AM"];
+    const afternoonSlots = ["12:15 PM", "1:00 PM", "2:00 PM", "3:00 PM"];
+    const nightSlots = ["6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM"];
+
+    // Elegir
+    List<String> displaySlots;
+    switch (selectedDayTime) {
+      case DayTime.tarde:
+        displaySlots = afternoonSlots;
+        break;
+      case DayTime.noche:
+        displaySlots = nightSlots;
+        break;
+      case DayTime.maniana:
+      default:
+        displaySlots = morningSlots;
+        break;
+    }
+
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: hours.length,
+      itemCount: displaySlots.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         mainAxisSpacing: 8,
         crossAxisSpacing: 8,
-        childAspectRatio: 2.5,
+        childAspectRatio: 3.5,
       ),
-      itemBuilder: (context, index) {
-        final h = hours[index];
-        final bool isSelected = (h == selectedHour);
+      itemBuilder: (ctx, i) {
+        final slot = displaySlots[i];
+        final isSelected = (slot == selectedHour);
         return GestureDetector(
-          onTap: () => onSelectHour(h),
+          onTap: () => onSelectHour(slot),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             decoration: BoxDecoration(
-              color: isSelected ? const Color(0xFF5B6BF5) : Colors.grey[200],
+              color: isSelected ? kPrimaryColor : Colors.grey[200],
               borderRadius: BorderRadius.circular(20),
             ),
             alignment: Alignment.center,
             child: Text(
-              h,
+              slot,
               style: TextStyle(
                 color: isSelected ? Colors.white : Colors.black87,
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),

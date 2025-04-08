@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:paciente_app/core/ui/alert_modal.dart';
 import 'package:provider/provider.dart';
 import 'package:paciente_app/features/create_account/presentation/provider/patient_provider.dart';
 
@@ -71,7 +72,16 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
             // Verificar vieja pass? (guardada en patientProv.patient.password)
             final oldStored = patientProv.patient.password ?? "";
             if (_oldPassCtrl.text != oldStored) {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Contraseña actual incorrecta.")));
+              //ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Contraseña actual incorrecta.")));
+              AlertModal.showAlert(
+                context,
+                color: Colors.red,
+                title: 'Contraseña actual incorrecta.',
+                description: '',
+                detail: 'Detalle opcional',
+                forceDialog: false, // false => SnackBar
+                snackbarDurationInSeconds: 5,
+              );
               return;
             }
             // Verificar nueva

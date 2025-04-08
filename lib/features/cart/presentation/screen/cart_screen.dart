@@ -1,4 +1,3 @@
-// lib/features/cart/presentation/screen/cart_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:paciente_app/features/cart/presentation/provider/cart_provider.dart';
@@ -17,16 +16,15 @@ class CartScreen extends StatelessWidget {
 
     if (items.isEmpty) {
       return Scaffold(
-        //appBar: //AppBar(title: const Text('Carrito de Compras')),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: const [
             Icon(
               Icons.remove_shopping_cart_outlined,
               color: Colors.grey,
               size: 50,
             ),
-            const Center(child: Text('Carrito vacío')),
+            Center(child: Text('Carrito vacío')),
           ],
         ),
       );
@@ -34,7 +32,6 @@ class CartScreen extends StatelessWidget {
 
     double total = 0.0;
     for (final item in items) {
-      // Aplica descuento sólo si el plan es "Paquete Integral" y hay discount en el med
       final hasPlanDiscount = (plan == "Paquete Integral") && (item.medication.discountPercentage > 0);
       final discountFactor = hasPlanDiscount ? (1 - (item.medication.discountPercentage / 100)) : 1.0;
       final priceWithPlan = item.medication.price * discountFactor * item.quantity;
@@ -42,7 +39,6 @@ class CartScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      ////appBar: //AppBar(title: const Text('Carrito de Compras')),
       body: Column(
         children: [
           Expanded(
@@ -71,8 +67,12 @@ class CartScreen extends StatelessWidget {
           const SizedBox(height: 8),
           ElevatedButton(
             onPressed: () {
-              // Lógica de checkout, etc.
+              // Lógica de checkout
             },
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
             child: const Text('Finalizar Compra'),
           ),
           const SizedBox(height: 16),
@@ -86,13 +86,21 @@ class CartScreen extends StatelessWidget {
 class _CartItemTile extends StatelessWidget {
   final CartItemModel cartItem;
   final String? plan;
-  const _CartItemTile({Key? key, required this.cartItem, this.plan}) : super(key: key);
+
+  const _CartItemTile({
+    Key? key,
+    required this.cartItem,
+    this.plan,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final cartProv = context.read<CartProvider>();
+
     final hasPlanDiscount = (plan == "Paquete Integral") && (cartItem.medication.discountPercentage > 0);
     final discountFactor = hasPlanDiscount ? (1 - (cartItem.medication.discountPercentage / 100)) : 1.0;
     final priceWithDiscount = cartItem.medication.price * discountFactor;
+    final totalItemPrice = priceWithDiscount * cartItem.quantity;
 
     return ListTile(
       leading: Image.asset(
@@ -117,7 +125,25 @@ class _CartItemTile extends StatelessWidget {
           Text('Cantidad: ${cartItem.quantity}'),
         ],
       ),
-      trailing: Text('Total: S/ ${(priceWithDiscount * cartItem.quantity).toStringAsFixed(2)}'),
+      trailing: SizedBox(
+        width: 120,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            // Mostrar total del item
+            Text('S/ ${totalItemPrice.toStringAsFixed(2)}'),
+            const SizedBox(width: 8),
+            // Botón eliminar
+            IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: () {
+                // Remover el item del cart
+                cartProv.removeItem(cartItem);
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

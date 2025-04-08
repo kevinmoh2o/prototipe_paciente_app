@@ -40,7 +40,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final joinedString = "Se unió en ${_formatDate(joinedDate)}";
 
     return Scaffold(
-      appBar: AppBar(
+      /*  appBar: AppBar(
         automaticallyImplyLeading: false, // no flecha
         backgroundColor: Colors.white,
         elevation: 0,
@@ -50,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           style: TextStyle(color: Colors.black87),
         ),
         iconTheme: const IconThemeData(color: Colors.black87),
-      ),
+      ), */
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),

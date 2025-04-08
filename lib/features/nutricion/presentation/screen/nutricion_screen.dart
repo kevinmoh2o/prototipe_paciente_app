@@ -1,39 +1,131 @@
-// nutricion_screen.dart
+// lib/features/nutricion/presentation/screen/nutricion_screen.dart
+
 import 'package:flutter/material.dart';
+import 'package:paciente_app/features/nutricion/presentation/screen/evaluacion_nutricional_screen.dart';
+import 'package:paciente_app/features/nutricion/presentation/screen/consulta_nutri_screen.dart';
+import 'package:paciente_app/features/nutricion/presentation/screen/recetas_screen.dart';
+import 'package:paciente_app/features/nutricion/presentation/screen/grupos_nutricion_screen.dart';
 
 class NutricionScreen extends StatelessWidget {
   const NutricionScreen({Key? key}) : super(key: key);
 
-  // Sección enfocada en planes alimenticios, tips, recetarios, etc.
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Nutrición")),
+      appBar: AppBar(
+        title: const Text("Nutrición y Alimentación"),
+        backgroundColor: Colors.green,
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Un Banner
+            _NutriSectionCard(
+              title: "Evaluación Nutricional",
+              subtitle: "Completa un cuestionario sobre tus hábitos alimenticios",
+              icon: Icons.quiz,
+              color: Colors.purple,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const EvaluacionNutricionalScreen()),
+                );
+              },
+            ),
+            const SizedBox(height: 12),
+            _NutriSectionCard(
+              title: "Consulta con Nutriólogo",
+              subtitle: "Habla con expertos en nutrición en vivo",
+              icon: Icons.medical_services,
+              color: Colors.orange,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ConsultaNutriScreen()),
+                );
+              },
+            ),
+            const SizedBox(height: 12),
+            _NutriSectionCard(
+              title: "Recetas Saludables",
+              subtitle: "Planes alimenticios y recetas",
+              icon: Icons.restaurant_menu,
+              color: Colors.teal,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const RecetasScreen()),
+                );
+              },
+            ),
+            const SizedBox(height: 12),
+            _NutriSectionCard(
+              title: "Grupos de Nutrición",
+              subtitle: "Comparte tips y recetas con otros pacientes",
+              icon: Icons.group,
+              color: Colors.blueGrey,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const GruposNutricionScreen()),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _NutriSectionCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _NutriSectionCard({Key? key, required this.title, required this.subtitle, required this.icon, required this.color, required this.onTap})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
             Container(
-              height: 120,
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.green.shade100,
+                color: color,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Center(
-                child: Text(
-                  "Mejora tu alimentación",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
+              child: Icon(icon, color: Colors.white),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(fontSize: 13, color: Colors.black54),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
-
-            // Widget de contenido
-            // Por ej. una lista de planes:
-            // ...
+            const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey)
           ],
         ),
       ),

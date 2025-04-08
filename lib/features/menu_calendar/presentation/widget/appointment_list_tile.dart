@@ -15,51 +15,69 @@ class AppointmentListTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       padding: const EdgeInsets.all(12),
-      child: Row(
+      child: Column(
         children: [
-          CircleAvatar(
-            backgroundImage: AssetImage(appointment.doctor.profileImage),
-            radius: 24,
+          Row(
+            children: [
+              CircleAvatar(
+                backgroundImage: AssetImage(appointment.doctor.profileImage),
+                radius: 24,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      appointment.doctor.name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
+                    Text(
+                      appointment.doctor.specialty,
+                      style: const TextStyle(fontSize: 13, color: Colors.black54),
+                    ),
+                    // Horario
+                    const SizedBox(height: 4),
+                    Text(
+                      "$timeString - ${_addMinutes(timeString, 45)}",
+                      style: const TextStyle(fontSize: 13),
+                    ),
+                  ],
+                ),
+              ),
+              // Si es telemedicina, mostramos el ícono de videollamada
+              //if (appointment.isTelemedicine)
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white70,
+                  shape: BoxShape.circle,
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.video_call, color: Colors.purple),
+                  onPressed: () {
+                    // Iniciar videollamada
+                  },
+                ),
+              ),
+              const SizedBox(height: 4),
+            ],
           ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 55, vertical: 5),
+            child: Row(
               children: [
+                const Icon(Icons.star, color: Colors.amber, size: 14),
+                const SizedBox(width: 4),
                 Text(
-                  appointment.doctor.name,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                  ),
-                ),
-                Text(
-                  appointment.doctor.specialty,
-                  style: const TextStyle(fontSize: 13, color: Colors.black54),
-                ),
-                // Horario
-                const SizedBox(height: 4),
-                Text(
-                  "$timeString - ${_addMinutes(timeString, 45)}",
-                  style: const TextStyle(fontSize: 13),
+                  "${appointment.doctor.rating} (${appointment.doctor.reviewsCount} Reviews)",
+                  style: const TextStyle(fontSize: 12),
                 ),
               ],
             ),
           ),
-          // Si es telemedicina, mostramos el ícono de videollamada
-          if (appointment.isTelemedicine)
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white70,
-                shape: BoxShape.circle,
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.video_call, color: Colors.purple),
-                onPressed: () {
-                  // Iniciar videollamada
-                },
-              ),
-            ),
         ],
       ),
     );

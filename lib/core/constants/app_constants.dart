@@ -4,7 +4,6 @@ import 'package:paciente_app/core/data/models/plan_data_model.dart';
 import 'package:paciente_app/core/data/models/schedule_model.dart';
 import 'package:paciente_app/core/data/models/schedule_slot_model.dart';
 import 'package:paciente_app/features/planes/data/models/plan_model.dart';
-import 'package:paciente_app/features/planes/presentation/screen/planes_screen.dart';
 
 class AppConstants {
   static const List<String> specialties = [

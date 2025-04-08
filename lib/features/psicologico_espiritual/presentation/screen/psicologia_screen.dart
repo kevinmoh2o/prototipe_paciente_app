@@ -1,155 +1,135 @@
-import 'package:flutter/material.dart';
-import 'package:paciente_app/features/psicologico_espiritual/data/model/psicologia_option_model.dart';
-import 'package:paciente_app/features/psicologico_espiritual/data/service/psicologia_service.dart';
-import 'package:paciente_app/features/psicologico_espiritual/presentation/widgets/psy_option_card.dart';
+// lib/features/psicologico_espiritual/presentation/screen/psicologia_screen.dart
 
-class PsicologiaScreen extends StatefulWidget {
+import 'package:flutter/material.dart';
+import 'package:paciente_app/features/psicologico_espiritual/presentation/screen/evaluacion_inicial_screen.dart';
+import 'package:paciente_app/features/psicologico_espiritual/presentation/screen/consulta_psicologica_screen.dart';
+import 'package:paciente_app/features/psicologico_espiritual/presentation/screen/apoyo_espiritual_screen.dart';
+import 'package:paciente_app/features/psicologico_espiritual/presentation/screen/grupos_apoyo_screen.dart';
+
+class PsicologiaScreen extends StatelessWidget {
   const PsicologiaScreen({Key? key}) : super(key: key);
 
   @override
-  State<PsicologiaScreen> createState() => _PsicologiaScreenState();
-}
-
-class _PsicologiaScreenState extends State<PsicologiaScreen> with SingleTickerProviderStateMixin {
-  late final List<PsicologiaOptionModel> _options;
-  late final AnimationController _controller;
-  late final Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _options = PsicologiaService.options;
-
-    // Animación para FadeIn del listado
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 800),
-    );
-    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
-    _controller.forward(); // inicias la animación
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final bgColor = theme.scaffoldBackgroundColor; // color de fondo
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Apoyo Psicológico y Espiritual"),
-        backgroundColor: const Color(0xFF5B6BF5),
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black87),
-        titleTextStyle: theme.textTheme.headlineSmall!.copyWith(color: const Color.fromARGB(221, 255, 255, 255)),
-        centerTitle: true,
+        backgroundColor: Colors.blue,
       ),
-      extendBodyBehindAppBar: true, // para que el AppBar flote sobre el CustomPaint
-      body: Stack(
-        children: [
-          // Fondo con un CustomPaint curvo degradé
-          CustomPaint(
-            size: Size(MediaQuery.of(context).size.width, 300), // altura del header
-            painter: _PsyHeaderPainter(),
-          ),
-
-          // Contenido principal
-          SafeArea(
-            child: FadeTransition(
-              opacity: _animation,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    /* const SizedBox(height: 100), // espacio debajo del AppBar
-                    // Texto principal o banner
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade100,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Text(
-                        "Encuentra apoyo psicológico y espiritual",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ), */
-                    const SizedBox(height: 20),
-
-                    // Lista de opciones
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: _options.length,
-                      itemBuilder: (context, index) {
-                        final opt = _options[index];
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          child: PsyOptionCard(option: opt),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 24),
-                  ],
-                ),
-              ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _SectionCard(
+              title: "Evaluación Inicial",
+              subtitle: "Completa un cuestionario para conocer tu estado emocional.",
+              icon: Icons.quiz,
+              color: Colors.purple,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const EvaluacionInicialScreen()),
+                );
+              },
             ),
-          ),
-        ],
+            const SizedBox(height: 12),
+            _SectionCard(
+              title: "Consulta Psicológica",
+              subtitle: "Habla con psicólogos en vivo para asesoría",
+              icon: Icons.psychology,
+              color: Colors.orange,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ConsultaPsicologicaScreen()),
+                );
+              },
+            ),
+            const SizedBox(height: 12),
+            _SectionCard(
+              title: "Apoyo Espiritual",
+              subtitle: "Recursos motivacionales y consejería espiritual.",
+              icon: Icons.sunny_snowing,
+              color: Colors.teal,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ApoyoEspiritualScreen()),
+                );
+              },
+            ),
+            const SizedBox(height: 12),
+            _SectionCard(
+              title: "Grupos de Apoyo",
+              subtitle: "Interactúa con otros pacientes, comparte y recibe comentarios.",
+              icon: Icons.group,
+              color: Colors.blueGrey,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const GruposApoyoScreen()),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-/// Pintor personalizado para el header con un degradé y una curva suave
-class _PsyHeaderPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rect = Rect.fromLTWH(0, 0, size.width, size.height);
+class _SectionCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
 
-    final Gradient gradient = const LinearGradient(
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-      colors: [Color(0xFF94C0FF), Color(0xFFFFFFFF)],
-      stops: [0.0, 1.0],
+  const _SectionCard({Key? key, required this.title, required this.subtitle, required this.icon, required this.color, required this.onTap})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: color,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: Colors.white),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(fontSize: 13, color: Colors.black54),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey)
+          ],
+        ),
+      ),
     );
-
-    final paint = Paint()..shader = gradient.createShader(rect);
-
-    final path = Path();
-    path.lineTo(0, size.height - 50);
-
-    final controlPoint = Offset(size.width / 2, size.height);
-    final endPoint = Offset(size.width, size.height - 50);
-
-    path.quadraticBezierTo(
-      controlPoint.dx,
-      controlPoint.dy,
-      endPoint.dx,
-      endPoint.dy,
-    );
-    path.lineTo(size.width, 0);
-    path.close();
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldReclip(_PsyHeaderPainter oldDelegate) => false;
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    // No need to repaint since the design is static and does not change dynamically
-    return false;
   }
 }

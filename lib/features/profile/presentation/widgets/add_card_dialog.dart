@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:paciente_app/core/ui/alert_modal.dart';
 import 'package:paciente_app/features/profile/presentation/widgets/profile_payment_methods.dart';
 
 class AddCardDialog extends StatefulWidget {
@@ -55,8 +56,15 @@ class _AddCardDialogState extends State<AddCardDialog> {
         ElevatedButton(
             onPressed: () {
               if (_cardNumberCtrl.text.isEmpty || _holderNameCtrl.text.isEmpty) {
-                // minimal val
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Completa al menos número y titular")));
+                AlertModal.showAlert(
+                  context,
+                  color: Colors.red,
+                  title: 'Completa al menos número y titular ',
+                  description: '',
+                  detail: 'Detalle opcional',
+                  forceDialog: false, // false => SnackBar
+                  snackbarDurationInSeconds: 5,
+                );
                 return;
               }
               final newCard =

@@ -5,9 +5,9 @@ import 'package:paciente_app/core/constants/app_constants.dart';
 const Color kPrimaryColor = Color(0xFF5B6BF5);
 
 enum CalendarFlowStep {
-  idle, // Muestra lista de citas
-  hourAndDayTime, // Paso 1: Seleccionar Mañana/Tarde/Noche + la Hora
-  category, // Paso 2: Tipo de consulta
+  idle, // Muestra calendario + citas del día
+  hourAndDayTime, // Paso 1: Seleccionar horario
+  category, // Paso 2: Seleccionar tipo de consulta
   doctor, // Paso 3: Seleccionar doctor
   confirm // Paso 4: Confirmar
 }
@@ -36,11 +36,11 @@ class AppointmentModel {
 }
 
 class CalendarProvider extends ChangeNotifier {
-  // Fecha seleccionada en calendario
+  // Fecha seleccionada en el calendario
   DateTime _selectedDate = DateTime.now();
   DateTime get selectedDate => _selectedDate;
 
-  // Paso del flujo
+  // Paso actual
   CalendarFlowStep _currentStep = CalendarFlowStep.idle;
   CalendarFlowStep get currentStep => _currentStep;
 
@@ -68,17 +68,16 @@ class CalendarProvider extends ChangeNotifier {
   ];
   List<AppointmentModel> get allAppointments => _allAppointments;
 
-
-  // Retornamos solo las citas de la fecha seleccionada, ordenadas
+  // Filtra las citas del día seleccionado
   List<AppointmentModel> get appointmentsForSelectedDate {
     final daily = _allAppointments.where((a) {
       return a.dateTime.year == _selectedDate.year && a.dateTime.month == _selectedDate.month && a.dateTime.day == _selectedDate.day;
     }).toList();
-    daily.sort((a, b) => a.dateTime.compareTo(b.dateTime)); // Orden cronológico
+    daily.sort((a, b) => a.dateTime.compareTo(b.dateTime));
     return daily;
   }
 
-  // Doctores de prueba
+  // Doctores (demo) en AppConstants
   final List<DoctorModel> _allDoctors = AppConstants.calendarDoctors;
   List<DoctorModel> get filteredDoctors {
     if (_selectedCategory == null) return [];
@@ -92,9 +91,10 @@ class CalendarProvider extends ChangeNotifier {
     }
   }
 
-  // Métodos
+  // Seleccionar fecha en el mini calendario
   void selectDate(DateTime date) {
     _selectedDate = date;
+    // Si estabas en wizard y cambias la fecha, regresas a idle
     if (_currentStep != CalendarFlowStep.idle) {
       resetNewAppointment();
       _currentStep = CalendarFlowStep.idle;
@@ -102,15 +102,18 @@ class CalendarProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Iniciar wizard
   void startScheduling() {
     _currentStep = CalendarFlowStep.hourAndDayTime;
     notifyListeners();
   }
 
+  // Retroceder un paso
   void backStep() {
     switch (_currentStep) {
       case CalendarFlowStep.idle:
       case CalendarFlowStep.hourAndDayTime:
+        // Vuelve a idle
         resetNewAppointment();
         _currentStep = CalendarFlowStep.idle;
         break;
@@ -127,6 +130,7 @@ class CalendarProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Avanzar
   void nextStep() {
     switch (_currentStep) {
       case CalendarFlowStep.hourAndDayTime:
@@ -140,18 +144,15 @@ class CalendarProvider extends ChangeNotifier {
         break;
       case CalendarFlowStep.confirm:
       case CalendarFlowStep.idle:
-        // nada
+        // Nada
         break;
     }
     notifyListeners();
   }
 
-  // Seleccionar turno
+  // Seleccionar turno (Mañana/Tarde/Noche)
   void selectDayTime(DayTime dt) {
-    print("TEST dt");
-    print(dt);
     _selectedDayTime = dt;
-    // Al cambiar turno, reiniciamos hora
     _selectedHour = null;
     notifyListeners();
   }
@@ -182,44 +183,36 @@ class CalendarProvider extends ChangeNotifier {
 
   DoctorModel? get selectedDoctor => _selectedDoctor;
 
-  // Generamos la DateTime final
+  // Generar DateTime final
   DateTime? get newAppointmentDateTime {
     if (_selectedHour == null) return null;
-    final parts = _selectedHour!.split(" "); // ["8:30","AM"]
+    final parts = _selectedHour!.split(" "); // ej ["8:30","AM"]
     if (parts.length != 2) return null;
+
     final hm = parts[0].split(":"); // ["8","30"]
     final meridiem = parts[1];
     int hour = int.tryParse(hm[0]) ?? 0;
     int minute = int.tryParse(hm[1]) ?? 0;
+
     if (meridiem == "PM" && hour < 12) hour += 12;
     if (meridiem == "AM" && hour == 12) hour = 0;
 
-    return DateTime(
-      _selectedDate.year,
-      _selectedDate.month,
-      _selectedDate.day,
-      hour,
-      minute,
-    );
+    return DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, hour, minute);
   }
 
+  // Confirmar
   Future<void> confirmAppointment() async {
     if (_selectedDoctor == null || newAppointmentDateTime == null) return;
     final isTele = (_selectedCategory == AppointmentCategory.telemedicina);
 
-    _allAppointments.add(
-      AppointmentModel(
-        dateTime: newAppointmentDateTime!,
-        patientName: "Paciente Demo",
-        doctor: _selectedDoctor!,
-        isTelemedicine: isTele,
-      ),
-    );
+    _allAppointments
+        .add(AppointmentModel(dateTime: newAppointmentDateTime!, patientName: "Paciente Demo", doctor: _selectedDoctor!, isTelemedicine: isTele));
     resetNewAppointment();
     _currentStep = CalendarFlowStep.idle;
     notifyListeners();
   }
 
+  // Reiniciar datos del wizard
   void resetNewAppointment() {
     _selectedDayTime = DayTime.maniana;
     _selectedHour = null;
