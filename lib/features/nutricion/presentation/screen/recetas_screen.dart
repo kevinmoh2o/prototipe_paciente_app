@@ -1,7 +1,10 @@
 // lib/features/nutricion/presentation/screen/recetas_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:paciente_app/core/data/models/patient_model.dart';
+import 'package:paciente_app/core/data/models/recommendation_model.dart';
 import 'package:paciente_app/core/ui/alert_modal.dart';
+import 'package:paciente_app/core/widgets/recommendation_list_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:paciente_app/features/nutricion/presentation/provider/nutricion_provider.dart';
 
@@ -13,7 +16,21 @@ class RecetasScreen extends StatelessWidget {
     final nutriProv = context.watch<NutricionProvider>();
     final recetas = nutriProv.recetas;
 
-    return Scaffold(
+    final PatientModel? paciente = /* recupera tu paciente con SharedPrefs o Provider */ null;
+
+    // Suponiendo que definiste en algún lado:
+    final List<RecommendationModel> miListaDeRutinas = nutriProv.recetasRecommendations;
+
+    return RecommendationListScreen(
+      screenTitle: "Recetas Saludables",
+      iconData: Icons.restaurant,
+      iconBgColor: Colors.green.shade50,
+      iconColor: Colors.green,
+      allRecommendations: miListaDeRutinas,
+      patient: paciente, // para filtrar por diagnóstico
+    );
+
+    /* return Scaffold(
       appBar: AppBar(
         title: const Text("Recetas Saludables"),
         backgroundColor: Colors.teal,
@@ -73,6 +90,6 @@ class RecetasScreen extends StatelessWidget {
           );
         },
       ),
-    );
+    ); */
   }
 }

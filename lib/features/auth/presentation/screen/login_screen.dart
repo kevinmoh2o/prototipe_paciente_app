@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:paciente_app/core/data/models/patient_model.dart';
+import 'package:paciente_app/core/data/services/patient_local_service.dart';
 import 'package:paciente_app/features/create_account/presentation/provider/patient_provider.dart';
 import 'package:paciente_app/features/main_navigation/screen/main_navigation_screen.dart';
 import 'package:provider/provider.dart';

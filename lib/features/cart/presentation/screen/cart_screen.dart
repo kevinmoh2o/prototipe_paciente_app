@@ -1,8 +1,15 @@
+// lib/features/cart/presentation/screen/cart_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:paciente_app/features/cart/presentation/provider/cart_provider.dart';
 import 'package:paciente_app/features/create_account/presentation/provider/patient_provider.dart';
 import 'package:paciente_app/features/cart/data/models/cart_item_model.dart';
+
+// Importamos nuestro Model y Service
+import 'package:paciente_app/features/cart/data/models/payment_method_model.dart';
+import 'package:paciente_app/features/cart/data/services/payment_service.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({Key? key}) : super(key: key);
@@ -16,6 +23,10 @@ class CartScreen extends StatelessWidget {
 
     if (items.isEmpty) {
       return Scaffold(
+        appBar: AppBar(
+          title: const Text("Carrito"),
+          backgroundColor: const Color(0xFF5B6BF5),
+        ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
@@ -39,8 +50,13 @@ class CartScreen extends StatelessWidget {
     }
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Carrito"),
+        backgroundColor: const Color(0xFF5B6BF5),
+      ),
       body: Column(
         children: [
+          // Lista de items
           Expanded(
             child: ListView.builder(
               itemCount: items.length,
@@ -51,6 +67,7 @@ class CartScreen extends StatelessWidget {
             ),
           ),
           const Divider(thickness: 1),
+          // Total
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
@@ -65,11 +82,12 @@ class CartScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
+          // Botón Finalizar
           ElevatedButton(
-            onPressed: () {
-              // Lógica de checkout
-            },
+            onPressed: () => _onCheckout(context, total),
             style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF5B6BF5),
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
@@ -80,9 +98,127 @@ class CartScreen extends StatelessWidget {
       ),
     );
   }
+
+  void _onCheckout(BuildContext context, double total) {
+    // Obtenemos la lista de PaymentMethods desde la Service
+    final paymentMethods = PaymentService.getPaymentMethods();
+
+    showModalBottomSheet(
+        context: context,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+        builder: (ctx) {
+          String? selectedMethod;
+
+          return StatefulBuilder(builder: (stateCtx, setState) {
+            return Container(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    "Selecciona un método de pago",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Lista horizontal de métodos
+                  SizedBox(
+                    height: 80,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: paymentMethods.length,
+                      separatorBuilder: (_, __) => const SizedBox(width: 12),
+                      itemBuilder: (_, index) {
+                        final pm = paymentMethods[index];
+                        final isSelected = (selectedMethod == pm.name);
+
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() => selectedMethod = pm.name);
+                          },
+                          child: Container(
+                            width: 80,
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: isSelected ? const Color(0xFF5B6BF5) : Colors.grey[200],
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(pm.assetIcon, width: 40, height: 40),
+                                const SizedBox(height: 4),
+                                Text(
+                                  pm.name,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: isSelected ? Colors.white : Colors.black87,
+                                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: selectedMethod == null
+                        ? null
+                        : () {
+                            Navigator.pop(ctx); // cierra bottomSheet
+                            _showPaymentSuccess(context, selectedMethod!, total);
+                          },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF5B6BF5),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                    ),
+                    child: const Text("Pagar"),
+                  )
+                ],
+              ),
+            );
+          });
+        });
+  }
+
+  void _showPaymentSuccess(BuildContext context, String method, double total) {
+    showDialog(
+        context: context,
+        builder: (dialogCtx) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            title: const Text("Compra Exitosa"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("Has pagado S/ ${total.toStringAsFixed(2)} con $method."),
+                const SizedBox(height: 8),
+                const Text("¡Gracias por tu compra!", style: TextStyle(fontWeight: FontWeight.bold)),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(dialogCtx);
+                  // Podrías vaciar el carrito o redirigir a otra pantalla
+                },
+                child: const Text("OK"),
+              )
+            ],
+          );
+        });
+  }
 }
 
-// Widget para cada ítem
+// Widget para cada ítem del carrito
 class _CartItemTile extends StatelessWidget {
   final CartItemModel cartItem;
   final String? plan;
@@ -130,17 +266,14 @@ class _CartItemTile extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            // Mostrar total del item
             Text('S/ ${totalItemPrice.toStringAsFixed(2)}'),
             const SizedBox(width: 8),
-            // Botón eliminar
             IconButton(
               icon: const Icon(Icons.delete, color: Colors.red),
               onPressed: () {
-                // Remover el item del cart
                 cartProv.removeItem(cartItem);
               },
-            ),
+            )
           ],
         ),
       ),

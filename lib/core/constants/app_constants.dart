@@ -216,7 +216,7 @@ class AppConstants {
     CategoryModel(
       title: "Apoyo Psicológico Espiritual",
       iconPath: "assets/icons/psychology.png",
-      description: "Orientación, soporte y espiritualidad",
+      description: "Soporte emocional y espiritual",
     ),
     CategoryModel(
       title: "Nutrición",

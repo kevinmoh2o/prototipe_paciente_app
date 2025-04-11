@@ -68,31 +68,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
-/* MaterialApp(
-        title: 'Onco 360',
-        theme: ThemeData(primaryColor: Color(0xFF5B6BF5)),
-        debugShowCheckedModeBanner: false,
-
-        // El builder se aplica a TODAS las pantallas
-        builder: (context, child) {
-          return Scaffold(
-            // Fondo morado para toda la app
-            //backgroundColor: const Color(0xFF4F47C2),
-            backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-
-            // Centra el contenido y fija un ancho máximo
-            body: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 500),
-                // child es la pantalla que se esté mostrando (LoginScreen, etc.)
-                child: child ?? const SizedBox.shrink(),
-              ),
-            ),
-          );
-        },
-
-        // Primera pantalla (puedes cambiar a rutas nombradas si gustas)
-        home: const LoginScreen(),
-      ), */

@@ -1,8 +1,8 @@
-// lib/features/psicologico_espiritual/presentation/provider/psicologia_provider.dart
-
 import 'package:flutter/material.dart';
+import 'package:paciente_app/core/data/models/comment_model.dart';
+import 'package:paciente_app/core/data/models/grupo_post_model.dart';
+import 'package:paciente_app/core/data/models/recommendation_model.dart';
 
-// Modelos de ejemplo
 class PsicologoInfo {
   final String name;
   final double rating;
@@ -14,20 +14,6 @@ class PsicologoInfo {
     required this.rating,
     required this.imageAsset,
     this.isOnline = true,
-  });
-}
-
-class PostModel {
-  final String author;
-  final String content;
-  int reactionsCount;
-  int commentsCount;
-
-  PostModel({
-    required this.author,
-    required this.content,
-    this.reactionsCount = 0,
-    this.commentsCount = 0,
   });
 }
 
@@ -49,88 +35,162 @@ class PsicologiaProvider extends ChangeNotifier {
   ];
   List<PsicologoInfo> get psicologos => _psicologos;
 
-  // 4) Feed de Grupos de Apoyo
-  final List<PostModel> _posts = [
-    // Ejemplos originales
-    PostModel(
-      author: "María A.",
-      content: "Hoy tuve mi primera quimioterapia, fue duro pero me siento con ganas de seguir adelante.",
-      commentsCount: 2,
-      reactionsCount: 10,
-    ),
-    PostModel(
-      author: "Carlos G.",
-      content: "Comparto un artículo que me ayudó a sobrellevar la ansiedad.",
-      commentsCount: 1,
-      reactionsCount: 4,
-    ),
-    PostModel(
-      author: "Ana R.",
-      content: "Gracias por sus palabras de ánimo, me sirvieron mucho en momentos difíciles.",
-      reactionsCount: 15,
-      commentsCount: 3,
-    ),
-
-    // Ejemplos adicionales
-    PostModel(
-      author: "Lucía P.",
-      content: "Hoy tuve una sesión de terapia que me hizo sentir mucho más tranquila, ¡gracias por su apoyo!",
-      commentsCount: 5,
-      reactionsCount: 18,
-    ),
-    PostModel(
-      author: "Raúl V.",
-      content: "Empecé a practicar la meditación diaria y ya noto cómo mi mente se calma más rápido.",
-      commentsCount: 3,
-      reactionsCount: 12,
-    ),
-    PostModel(
-      author: "Sandra L.",
-      content: "A veces, solo necesitamos un poco de tiempo para nosotros mismos, ¡espero que todos encuentren paz hoy!",
-      commentsCount: 2,
-      reactionsCount: 20,
-    ),
-    PostModel(
-      author: "José F.",
-      content: "Recibí una palabra de aliento hoy y fue justo lo que necesitaba para seguir adelante. ¡Gracias!",
-      commentsCount: 4,
-      reactionsCount: 25,
-    ),
-    PostModel(
-      author: "Natalia M.",
-      content: "Estoy aprendiendo a decir 'no' cuando algo no me beneficia, y me siento mucho más fuerte.",
-      commentsCount: 3,
-      reactionsCount: 30,
-    ),
-    PostModel(
-      author: "Fernando A.",
-      content: "Después de una conversación con un amigo, entendí que hay momentos en los que el apoyo externo es crucial.",
-      commentsCount: 6,
-      reactionsCount: 22,
-    ),
-  ];
-
-  List<PostModel> get posts => _posts;
-
-  void reactToPost(int index) {
-    if (index < 0 || index >= _posts.length) return;
-    _posts[index].reactionsCount++;
-    notifyListeners();
-  }
-
-  void commentOnPost(int index) {
-    if (index < 0 || index >= _posts.length) return;
-    _posts[index].commentsCount++;
-    notifyListeners();
-  }
-
-  // Apoyo Espiritual: Podrías manejar una lista de “resources” si gustas.
-
   // Ejemplo: datos
   final List<String> _recursosEspirituales = [
     "Oración matutina para iniciar el día con esperanza.",
     "Lectura motivacional: 'Cada día un paso'.",
     "Audio de meditación guiada.",
   ];
+
+  final List<RecommendationModel> recursosEspiritualesRecommendations = [
+    RecommendationModel(
+      title: "Oración matutina para iniciar el día con esperanza",
+      shortDescription: "Una oración que te llena de esperanza para comenzar el día con fe.",
+      targetDiagnoses: [],
+      resources: [
+        // Recurso de audio para reproducir la oración
+        ResourceModel(
+          type: ResourceType.audio,
+          content: "assets/audios/oracion_matutina.mp3", // Ubicación en assets/audios/
+        ),
+        // Recurso de texto con la transcripción de la oración (opcional)
+        ResourceModel(
+          type: ResourceType.text,
+          content: "Querido Dios, al iniciar este día, te pido fortaleza, esperanza y la guía necesaria para enfrentar los desafíos. Amén.",
+        ),
+      ],
+    ),
+    RecommendationModel(
+      title: "Lectura motivacional: 'Cada día un paso'",
+      shortDescription: "Una lectura inspiradora para motivarte a avanzar poco a poco.",
+      targetDiagnoses: [],
+      resources: [
+        // Recurso de texto con el contenido motivacional
+        ResourceModel(
+          type: ResourceType.text,
+          content: "Cada día es una nueva oportunidad para crecer, aprender y acercarte a tus metas. Da un paso a la vez y confía en tu capacidad.",
+        ),
+        // Puedes añadir una imagen ilustrativa opcional
+        ResourceModel(
+          type: ResourceType.image,
+          content: "assets/images/lectura_motivacional.jpg",
+        ),
+      ],
+    ),
+    RecommendationModel(
+      title: "Audio de meditación guiada",
+      shortDescription: "Meditación guiada para ayudarte a relajarte y reconectar con tu interior.",
+      targetDiagnoses: [],
+      resources: [
+        // Recurso de audio para la meditación
+        ResourceModel(
+          type: ResourceType.audio,
+          content: "audios/meditacion_guiada.mp3",
+        ),
+        // Recurso de texto con instrucciones para la meditación
+        ResourceModel(
+          type: ResourceType.text,
+          content:
+              "Encuentra un lugar tranquilo, cierra los ojos y concéntrate en tu respiración. Deja ir las preocupaciones y conecta con tu paz interior.",
+        ),
+      ],
+    ),
+  ];
+
   List<String> get recursosEspirituales => _recursosEspirituales;
+
+  final List<GrupoPost> _posts = [
+    GrupoPost(
+      author: "María A.",
+      content: "Hoy tuve mi primera quimioterapia. Fue duro, pero tengo esperanza y agradezco el apoyo de todos.",
+      reactionCounts: {
+        "like": 0,
+        "love": 0,
+        "haha": 0,
+        "wow": 0,
+        "sad": 0,
+      },
+      comments: [
+        Comment(author: "Carlos G.", content: "¡Ánimo, María! Un día a la vez, aquí estamos para ti."),
+      ],
+    ),
+    GrupoPost(
+      author: "Carlos G.",
+      content: "Comparto un artículo que me ayudó a manejar la ansiedad durante mis sesiones.",
+      reactionCounts: {
+        "like": 0,
+        "love": 0,
+        "haha": 0,
+        "wow": 0,
+        "sad": 0,
+      },
+      comments: [],
+    ),
+    GrupoPost(
+      author: "Ana R.",
+      content: "Gracias por sus consejos, han sido mi luz en estos momentos difíciles.",
+      reactionCounts: {
+        "like": 0,
+        "love": 0,
+        "haha": 0,
+        "wow": 0,
+        "sad": 0,
+      },
+      comments: [],
+    ),
+    // ... (resto de posts que tenías, pero puedes retocar textos si gustas) ...
+  ];
+
+  List<GrupoPost> get posts => _posts;
+
+/*   void reactToPost(int index) {
+    if (index < 0 || index >= _posts.length) return;
+    _posts[index].react();
+    notifyListeners();
+  }
+ */
+  void addCommentToPost(int index, String commentText) {
+    if (index < 0 || index >= _posts.length) return;
+    _posts[index].addComment(
+      Comment(author: "Tú", content: commentText),
+    );
+    notifyListeners();
+  }
+
+  void reactToComment(int postIndex, int commentIndex) {
+    if (postIndex < 0 || postIndex >= _posts.length) return;
+    final comments = _posts[postIndex].comments;
+    if (commentIndex < 0 || commentIndex >= comments.length) return;
+    comments[commentIndex].react();
+    notifyListeners();
+  }
+
+  void reactToPost(int index, String reactionType) {
+    if (index < 0 || index >= _posts.length) return;
+    _posts[index].react(reactionType);
+    notifyListeners();
+  }
+
+// (Opcional) Si quieres conservar el método anterior sin romper llamadas existentes:
+  void reactToPostDefault(int index) {
+    reactToPost(index, "like");
+  }
+
+  void addPost(String content) {
+    final newPost = GrupoPost(
+      author: "Tú", // Puedes ajustar el autor según el usuario logueado
+      content: content,
+      reactionCounts: {
+        "like": 0,
+        "love": 0,
+        "haha": 0,
+        "wow": 0,
+        "sad": 0,
+      },
+      comments: [],
+    );
+    // Inserta el nuevo post al inicio de la lista o al final, según tu preferencia
+    _posts.insert(0, newPost);
+    notifyListeners();
+  }
 }
