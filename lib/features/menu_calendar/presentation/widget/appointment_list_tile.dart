@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:paciente_app/features/menu_calendar/presentation/provider/calendar_provider.dart';
+import 'package:paciente_app/features/telemedicina/presentation/screen/chat_screen.dart';
+import 'package:paciente_app/features/telemedicina/presentation/screen/video_call_screen.dart';
 
 class AppointmentListTile extends StatelessWidget {
   final AppointmentModel appointment;
@@ -7,11 +10,12 @@ class AppointmentListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isPaid = appointment.isPaid;
     final timeString = _formatHour(appointment.dateTime);
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.purple[50],
+        color: isPaid ? Colors.green.shade50 : Colors.red.shade50,
         borderRadius: BorderRadius.circular(12),
       ),
       padding: const EdgeInsets.all(12),
@@ -39,32 +43,76 @@ class AppointmentListTile extends StatelessWidget {
                       appointment.doctor.specialty,
                       style: const TextStyle(fontSize: 13, color: Colors.black54),
                     ),
-                    // Horario
                     const SizedBox(height: 4),
-                    Text(
-                      "$timeString - ${_addMinutes(timeString, 45)}",
-                      style: const TextStyle(fontSize: 13),
-                    ),
+                    // Rango de hora
+                    Text("$timeString - ${_addMinutes(timeString, 45)}", style: const TextStyle(fontSize: 13)),
+
+                    const SizedBox(height: 4),
+
+                    // Estado de la cita
+                    if (!isPaid)
+                      const Text(
+                        "Pendiente de Pago",
+                        style: TextStyle(fontSize: 13, color: Colors.red),
+                      )
+                    else
+                      const Text(
+                        "Cita Pagada",
+                        style: TextStyle(fontSize: 13, color: Colors.green),
+                      ),
                   ],
                 ),
               ),
-              // Si es telemedicina, mostramos el ícono de videollamada
-              //if (appointment.isTelemedicine)
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white70,
-                  shape: BoxShape.circle,
+
+              // Muestra íconos solo si está pagada
+              if (isPaid) ...[
+                Container(
+                  margin: const EdgeInsets.only(right: 8),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF5B6BF5),
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    icon: const FaIcon(FontAwesomeIcons.video, color: Colors.white),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => VideoCallScreen(
+                            doctorName: appointment.doctor.name,
+                            doctorSpecialty: appointment.doctor.specialty,
+                            doctorImage: appointment.doctor.profileImage,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
-                child: IconButton(
-                  icon: const Icon(Icons.video_call, color: Colors.purple),
-                  onPressed: () {
-                    // Iniciar videollamada
-                  },
+                Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.green,
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    icon: const FaIcon(FontAwesomeIcons.whatsapp, color: Colors.white),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ChatScreen(
+                            doctorName: appointment.doctor.name,
+                            doctorImage: appointment.doctor.profileImage,
+                            lastSeen: "5 minutos",
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              ),
-              const SizedBox(height: 4),
+              ],
             ],
           ),
+          // Rating, etc. (opcional)
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 55, vertical: 5),
             child: Row(
@@ -83,33 +131,27 @@ class AppointmentListTile extends StatelessWidget {
     );
   }
 
-  // Formatear hora en "8:30 a.m."
   String _formatHour(DateTime dt) {
     final hour = dt.hour;
     final minute = dt.minute.toString().padLeft(2, '0');
     final ampm = (hour >= 12) ? "p.m." : "a.m.";
-    final h12 = hour % 12 == 0 ? 12 : hour % 12;
+    final h12 = (hour % 12 == 0) ? 12 : hour % 12;
     return "$h12:$minute $ampm";
   }
 
-  // Sumar 45 min como ejemplo
   String _addMinutes(String time, int addMins) {
-    // Super simplificado: "8:30 a.m." -> parse
     final parts = time.split(" ");
     if (parts.length != 2) return time;
     final meridiem = parts[1];
-    final hourMin = parts[0].split(":"); // 8 y 30
+    final hm = parts[0].split(":");
+    int h = int.tryParse(hm[0]) ?? 0;
+    int m = int.tryParse(hm[1]) ?? 0;
 
-    int h = int.tryParse(hourMin[0]) ?? 0;
-    int m = int.tryParse(hourMin[1]) ?? 0;
     m += addMins;
     while (m >= 60) {
       m -= 60;
       h += 1;
     }
-    // Manejo AM/PM
-    // ...
-    // Para simplificar, no cambio AM/PM, etc. (en un caso real, parseo robusto).
     return "$h:${m.toString().padLeft(2, '0')} $meridiem";
   }
 }

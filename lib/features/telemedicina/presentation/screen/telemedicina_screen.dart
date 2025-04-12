@@ -73,7 +73,7 @@ class _TelemedicinaScreenState extends State<TelemedicinaScreen> {
           ),
           const SizedBox(height: 12),
 
-          // 2. Slider rating
+          /* // 2. Slider rating
           Row(
             children: [
               const Text("Mín. Rating:", style: TextStyle(fontWeight: FontWeight.bold)),
@@ -93,7 +93,7 @@ class _TelemedicinaScreenState extends State<TelemedicinaScreen> {
               Text("${prov.minRating.toStringAsFixed(1)}★"),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 12), */
 
           // 3. Botón "Aplicar Filtro"
           ElevatedButton(

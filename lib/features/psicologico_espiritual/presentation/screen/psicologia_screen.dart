@@ -33,7 +33,7 @@ class PsicologiaScreen extends StatelessWidget {
                 );
               },
             ),
-            const SizedBox(height: 12),
+            /* const SizedBox(height: 12),
             _SectionCard(
               title: "Consulta Psicológica",
               subtitle: "Habla con psicólogos en vivo para asesoría",
@@ -45,7 +45,7 @@ class PsicologiaScreen extends StatelessWidget {
                   MaterialPageRoute(builder: (_) => const ConsultaPsicologicaScreen()),
                 );
               },
-            ),
+            ), */
             const SizedBox(height: 12),
             _SectionCard(
               title: "Apoyo Espiritual",

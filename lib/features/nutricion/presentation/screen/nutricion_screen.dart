@@ -32,7 +32,7 @@ class NutricionScreen extends StatelessWidget {
                 );
               },
             ),
-            const SizedBox(height: 12),
+            /* const SizedBox(height: 12),
             _NutriSectionCard(
               title: "Consulta con Nutriólogo",
               subtitle: "Habla con expertos en nutrición en vivo",
@@ -44,7 +44,7 @@ class NutricionScreen extends StatelessWidget {
                   MaterialPageRoute(builder: (_) => const ConsultaNutriScreen()),
                 );
               },
-            ),
+            ), */
             const SizedBox(height: 12),
             _NutriSectionCard(
               title: "Recetas Saludables",

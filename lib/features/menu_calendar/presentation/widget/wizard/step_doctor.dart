@@ -37,9 +37,9 @@ class StepDoctor extends StatelessWidget {
                     margin: const EdgeInsets.only(bottom: 8),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: isSelected ? kPrimaryColor.withOpacity(0.1) : Colors.white,
+                      color: isSelected ? const Color(0xFF5B6BF5).withOpacity(0.1) : Colors.white,
                       border: Border.all(
-                        color: isSelected ? kPrimaryColor : Colors.grey[300]!,
+                        color: isSelected ? const Color(0xFF5B6BF5) : Colors.grey[300]!,
                       ),
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -66,7 +66,7 @@ class StepDoctor extends StatelessWidget {
                             ],
                           ),
                         ),
-                        if (isSelected) const Icon(Icons.check_circle, color: kPrimaryColor)
+                        if (isSelected) const Icon(Icons.check_circle, color: Color(0xFF5B6BF5))
                       ],
                     ),
                   ),
@@ -80,7 +80,7 @@ class StepDoctor extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: cp.selectedDoctor == null ? null : cp.nextStep,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: kPrimaryColor,
+                    backgroundColor: Color(0xFF5B6BF5),
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     padding: const EdgeInsets.symmetric(vertical: 14),

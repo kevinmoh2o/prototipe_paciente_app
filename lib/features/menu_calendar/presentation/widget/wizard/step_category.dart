@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/* import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:paciente_app/features/menu_calendar/presentation/provider/calendar_provider.dart';
 import 'package:paciente_app/features/menu_calendar/presentation/widget/wizard/wizard_header.dart';
@@ -35,7 +35,7 @@ class StepCategory extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: cp.selectedCategory == null ? null : cp.nextStep,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: kPrimaryColor,
+                    backgroundColor: const Color(0xFF5B6BF5),
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     padding: const EdgeInsets.symmetric(vertical: 14),
@@ -50,3 +50,4 @@ class StepCategory extends StatelessWidget {
     );
   }
 }
+ */

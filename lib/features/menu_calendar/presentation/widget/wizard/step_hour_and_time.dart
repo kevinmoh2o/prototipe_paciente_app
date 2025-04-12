@@ -47,7 +47,7 @@ class StepHourAndTime extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: (cp.selectedHour == null) ? null : cp.nextStep,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: kPrimaryColor,
+                    //backgroundColor: kPrimaryColor,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     padding: const EdgeInsets.symmetric(vertical: 14),

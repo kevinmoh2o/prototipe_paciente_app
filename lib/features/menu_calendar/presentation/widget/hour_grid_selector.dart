@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:paciente_app/features/menu_calendar/presentation/provider/calendar_provider.dart';
 
+const Color kPrimaryColor = Color(0xFF5B6BF5);
+
 class HourGridSelector extends StatelessWidget {
   final DayTime? selectedDayTime;
   final String? selectedHour;
@@ -15,12 +17,10 @@ class HourGridSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Hardcode slots
     const morningSlots = ["8:30 AM", "9:00 AM", "9:30 AM", "10:00 AM"];
     const afternoonSlots = ["12:15 PM", "1:00 PM", "2:00 PM", "3:00 PM"];
     const nightSlots = ["6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM"];
 
-    // Elegir
     List<String> displaySlots;
     switch (selectedDayTime) {
       case DayTime.tarde:

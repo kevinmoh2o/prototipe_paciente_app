@@ -11,7 +11,7 @@ class TelemedicinaProvider extends ChangeNotifier {
     "Cirugía Oncológica",
     'Oncología Ginecológica',
     'Oncología Torácica',
-    'Oncología Digestiva',
+    /* 'Oncología Digestiva',
     'Oncología Urológica',
     'Oncología Dermatológica',
     'Neurooncología',
@@ -22,7 +22,7 @@ class TelemedicinaProvider extends ChangeNotifier {
     'Oncohematología',
     'Inmunooncología',
     'Genética Oncológica',
-    'Farmacología Oncológica',
+    'Farmacología Oncológica', */
   ];
 
   // Filtros

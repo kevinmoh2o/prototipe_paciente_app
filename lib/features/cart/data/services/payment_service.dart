@@ -1,5 +1,3 @@
-// lib/features/cart/data/services/payment_service.dart
-
 import 'package:paciente_app/features/cart/data/models/payment_method_model.dart';
 
 class PaymentService {

@@ -31,7 +31,7 @@ class DayTimeToggle extends StatelessWidget {
       constraints: const BoxConstraints(minWidth: 80, minHeight: 40),
       children: const [
         Icon(Icons.wb_sunny), // Mañana
-        Icon(Icons.wb_twighlight), // Tarde (icono "atardecer" o similar)
+        Icon(Icons.wb_twighlight), // Tarde (puedes usar un icono “wb_twilight” o similar)
         Icon(Icons.nights_stay), // Noche
       ],
     );

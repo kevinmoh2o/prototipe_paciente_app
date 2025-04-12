@@ -32,7 +32,7 @@ class AptitudScreen extends StatelessWidget {
                 );
               },
             ),
-            const SizedBox(height: 12),
+            /* const SizedBox(height: 12),
             _AptitudSectionCard(
               title: "Consulta con Entrenador",
               subtitle: "Asesórate con especialistas en ejercicio adaptado",
@@ -44,7 +44,7 @@ class AptitudScreen extends StatelessWidget {
                   MaterialPageRoute(builder: (_) => const ConsultaEntrenadorScreen()),
                 );
               },
-            ),
+            ), */
             const SizedBox(height: 12),
             _AptitudSectionCard(
               title: "Rutinas Recomendadas",

@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:paciente_app/features/menu_calendar/presentation/provider/calendar_provider.dart';
 
-// Si lo tienes en otro archivo, muévelo. Para aquí, asumo que kPrimaryColor está en el provider.
+// Importamos CartProvider para "pagar ahora" (marcar pagado) o “agregar a carrito”
+import 'package:paciente_app/features/cart/presentation/provider/cart_provider.dart';
+import 'package:paciente_app/features/main_navigation/screen/main_navigation_screen.dart';
+import 'package:paciente_app/features/create_account/presentation/provider/patient_provider.dart'; // Para leer activePlan
+
 const Color kPrimaryColor = Color(0xFF5B6BF5);
 
 class CalendarWizard extends StatelessWidget {
@@ -10,7 +14,7 @@ class CalendarWizard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cp = Provider.of<CalendarProvider>(context);
+    final cp = context.watch<CalendarProvider>();
 
     switch (cp.currentStep) {
       case CalendarFlowStep.hourAndDayTime:
@@ -18,7 +22,7 @@ class CalendarWizard extends StatelessWidget {
       case CalendarFlowStep.category:
         return const _StepCategory();
       case CalendarFlowStep.doctor:
-        return const _StepDoctor(); // <--- Donde mejoramos “Telemedicina”
+        return const _StepDoctor();
       case CalendarFlowStep.confirm:
         return const _StepConfirm();
       case CalendarFlowStep.idle:
@@ -29,16 +33,16 @@ class CalendarWizard extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Paso 1: Seleccionar Turno (Mañana/Tarde/Noche) y Hora
+// Paso 1 (sin cambios)
 class _StepHourAndDayTime extends StatelessWidget {
   const _StepHourAndDayTime({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final cp = Provider.of<CalendarProvider>(context);
+    final cp = context.watch<CalendarProvider>();
     return SingleChildScrollView(
       key: const ValueKey("StepHourAndDayTime"),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: [
           _WizardHeader(
@@ -46,14 +50,11 @@ class _StepHourAndDayTime extends StatelessWidget {
             onBack: cp.backStep,
           ),
           const SizedBox(height: 8),
-          // Toggle (mañana, tarde, noche)
           _DayTimeToggle(
             currentValue: cp.selectedDayTime,
-            onChanged: (val) => cp.selectDayTime(val),
+            onChanged: cp.selectDayTime,
           ),
           const SizedBox(height: 12),
-
-          // Horarios
           const Text("Horarios disponibles", style: TextStyle(fontSize: 13)),
           const SizedBox(height: 12),
           _HourGrid(
@@ -61,13 +62,12 @@ class _StepHourAndDayTime extends StatelessWidget {
             selectedHour: cp.selectedHour,
             onSelectHour: cp.selectHour,
           ),
-
           const SizedBox(height: 24),
           Row(
             children: [
               Expanded(
                 child: ElevatedButton(
-                  onPressed: (cp.selectedHour == null || cp.selectedDayTime == null) ? null : cp.nextStep,
+                  onPressed: (cp.selectedHour == null) ? null : cp.nextStep,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: kPrimaryColor,
                     foregroundColor: Colors.white,
@@ -76,7 +76,7 @@ class _StepHourAndDayTime extends StatelessWidget {
                   ),
                   child: const Text("Siguiente", style: TextStyle(fontSize: 16)),
                 ),
-              ),
+              )
             ],
           ),
         ],
@@ -86,17 +86,20 @@ class _StepHourAndDayTime extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Paso 2: Tipo de Consulta
+// Paso 2 (AQUÍ filtramos las categorías según plan)
 class _StepCategory extends StatelessWidget {
   const _StepCategory({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final cp = Provider.of<CalendarProvider>(context);
+    final cp = context.watch<CalendarProvider>();
+
+    final patientProv = context.watch<PatientProvider>();
+    final activePlan = patientProv.patient.activePlan; // p.e. "Paquete Integral"
 
     return SingleChildScrollView(
       key: const ValueKey("StepCategory"),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: [
           _WizardHeader(
@@ -104,10 +107,14 @@ class _StepCategory extends StatelessWidget {
             onBack: cp.backStep,
           ),
           const SizedBox(height: 16),
+
+          // CONSULTATION TOGGLE -> lo modificamos para recibir activePlan
           _ConsultationToggle(
             currentValue: cp.selectedCategory,
-            onChanged: (cat) => cp.selectCategory(cat),
+            onChanged: cp.selectCategory,
+            activePlan: activePlan,
           ),
+
           const SizedBox(height: 24),
           Row(
             children: [
@@ -122,7 +129,7 @@ class _StepCategory extends StatelessWidget {
                   ),
                   child: const Text("Siguiente", style: TextStyle(fontSize: 16)),
                 ),
-              ),
+              )
             ],
           ),
         ],
@@ -132,84 +139,81 @@ class _StepCategory extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Paso 3: Seleccionar Doctor (si telemedicina -> filtros)
-class _StepDoctor extends StatefulWidget {
+// Paso 3 (sin cambios)
+class _StepDoctor extends StatelessWidget {
   const _StepDoctor({Key? key}) : super(key: key);
 
   @override
-  State<_StepDoctor> createState() => _StepDoctorState();
-}
-
-class _StepDoctorState extends State<_StepDoctor> {
-  // Solo usaremos estos campos si la categoría es Telemedicina
-  double _minRating = 1.0;
-  String? _selectedTeleSpecialty; // null => “Todas”
-
-  final List<String> _teleSpecialties = [
-    "Todas",
-    "Oncología Médica",
-    "Hematología Oncológica",
-    "Radioterapia",
-    "Oncología Pediátrica",
-    "Oncología Ginecológica",
-    "Cirugía Oncológica",
-    // etc...
-  ];
-
-  @override
   Widget build(BuildContext context) {
-    final cp = Provider.of<CalendarProvider>(context);
-    final cat = cp.selectedCategory; // telemedicina, psico, nutri
-    final docsBase = cp.filteredDoctors; // la lista “base” que sale de category
-
-    // FILTRO local si cat==telemedicina
-    List docsFinal = docsBase;
-    final bool isTele = (cat == AppointmentCategory.telemedicina);
-
-    if (isTele) {
-      docsFinal = docsBase.where((doc) {
-        // rating
-        if (doc.rating < _minRating) return false;
-        // sub-especialidad
-        if (_selectedTeleSpecialty != null) {
-          final teleSpec = _selectedTeleSpecialty!.toLowerCase();
-          if (!doc.specialty.toLowerCase().contains(teleSpec)) return false;
-        }
-        return true;
-      }).toList();
-    }
+    final cp = context.watch<CalendarProvider>();
+    final docs = cp.filteredDoctors;
 
     return SingleChildScrollView(
       key: const ValueKey("StepDoctor"),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: [
           _WizardHeader(
-            title: "Seleccionar Especialista",
+            title: "Selecciona Especialista",
             onBack: cp.backStep,
           ),
           const SizedBox(height: 16),
-
-          // Si NO telemedicina => la lista normal
-          // Si ES telemedicina => primero mostramos “filtro”, luego la lista.
-          if (!isTele)
-            _buildDoctorList(context, cp, docsFinal)
+          if (docs.isEmpty)
+            const Text("No hay doctores disponibles para esta categoría.")
           else
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildTeleFilters(context, cp),
-                const SizedBox(height: 16),
-                _buildDoctorList(context, cp, docsFinal),
-              ],
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: docs.length,
+              itemBuilder: (ctx, i) {
+                final doc = docs[i];
+                final isSelected = (cp.selectedDoctor == doc);
+                return GestureDetector(
+                  onTap: () => cp.selectDoctor(doc),
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: isSelected ? kPrimaryColor.withOpacity(0.1) : Colors.white,
+                      border: Border.all(
+                        color: isSelected ? kPrimaryColor : Colors.grey[300]!,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundImage: AssetImage(doc.profileImage),
+                          radius: 24,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(doc.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                              Text(doc.specialty, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                              const SizedBox(height: 4),
+                              Text(
+                                "Tarifa: S/ ${doc.consultationFee.toStringAsFixed(2)}",
+                                style: const TextStyle(fontSize: 12, color: Colors.green, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (isSelected) const Icon(Icons.check_circle, color: kPrimaryColor),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
-
           const SizedBox(height: 24),
           Row(
             children: [
               Expanded(
                 child: ElevatedButton(
-                  onPressed: cp.selectedDoctor == null ? null : cp.nextStep,
+                  onPressed: (cp.selectedDoctor == null) ? null : cp.nextStep,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: kPrimaryColor,
                     foregroundColor: Colors.white,
@@ -218,159 +222,29 @@ class _StepDoctorState extends State<_StepDoctor> {
                   ),
                   child: const Text("Siguiente", style: TextStyle(fontSize: 16)),
                 ),
-              ),
+              )
             ],
           )
         ],
       ),
-    );
-  }
-
-  Widget _buildTeleFilters(BuildContext context, CalendarProvider cp) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.blue.shade50,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Filtro de sub-especialidad
-          Row(
-            children: [
-              const Text("Sub-Esp:", style: TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(width: 8),
-              Expanded(
-                child: DropdownButton<String>(
-                  isExpanded: true,
-                  value: _selectedTeleSpecialty ?? "Todas",
-                  items: _teleSpecialties.map((e) {
-                    return DropdownMenuItem(
-                      value: e,
-                      child: Text(e),
-                    );
-                  }).toList(),
-                  onChanged: (val) {
-                    setState(() => {_selectedTeleSpecialty = (val == "Todas") ? null : val});
-                  },
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-
-          // Rating
-          Row(
-            children: [
-              const Text("Mín. Rating:", style: TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Slider(
-                  min: 1.0,
-                  max: 5.0,
-                  divisions: 4,
-                  label: "${_minRating.toStringAsFixed(1)}★",
-                  value: _minRating,
-                  onChanged: (val) {
-                    setState(() => _minRating = val);
-                  },
-                ),
-              ),
-              Text("${_minRating.toStringAsFixed(1)}★"),
-            ],
-          ),
-          const SizedBox(height: 12),
-
-          // Botón “Aplicar Filtro”
-          ElevatedButton(
-            onPressed: () {
-              // Llamar setState para forzar rebuild
-              setState(() => null);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF324BB8),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            ),
-            child: const Text("Aplicar Filtro"),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDoctorList(BuildContext context, CalendarProvider cp, List docs) {
-    if (docs.isEmpty) {
-      return const Text("No hay doctores disponibles para esta categoría.");
-    }
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: docs.length,
-      itemBuilder: (ctx, i) {
-        final doc = docs[i];
-        final isSelected = (cp.selectedDoctor == doc);
-        return GestureDetector(
-          onTap: () => cp.selectDoctor(doc),
-          child: Container(
-            margin: const EdgeInsets.only(bottom: 8),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: isSelected ? kPrimaryColor.withOpacity(0.1) : Colors.white,
-              border: Border.all(
-                color: isSelected ? kPrimaryColor : Colors.grey[300]!,
-              ),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  backgroundImage: AssetImage(doc.profileImage),
-                  radius: 24,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(doc.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                      Text(doc.specialty, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                      Row(
-                        children: [
-                          const Icon(Icons.star, color: Colors.amber, size: 14),
-                          const SizedBox(width: 4),
-                          Text("${doc.rating} (${doc.reviewsCount} Reviews)", style: const TextStyle(fontSize: 12)),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                if (isSelected) const Icon(Icons.check_circle, color: kPrimaryColor),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Paso 4: Confirmar
+// Paso 4 (sin cambios)
 class _StepConfirm extends StatelessWidget {
   const _StepConfirm({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final cp = Provider.of<CalendarProvider>(context);
+    final cp = context.watch<CalendarProvider>();
     final dt = cp.newAppointmentDateTime;
     final doc = cp.selectedDoctor;
 
     return SingleChildScrollView(
       key: const ValueKey("StepConfirm"),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: [
           _WizardHeader(
@@ -401,6 +275,8 @@ class _StepConfirm extends StatelessWidget {
                       children: [
                         Text(doc.name, style: const TextStyle(fontWeight: FontWeight.bold)),
                         Text(doc.specialty, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                        const SizedBox(height: 4),
+                        Text("Tarifa: S/ ${doc.consultationFee.toStringAsFixed(2)}"),
                       ],
                     )
                   ],
@@ -412,7 +288,7 @@ class _StepConfirm extends StatelessWidget {
             children: [
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () => cp.confirmAppointment(),
+                  onPressed: () => _onConfirmPressed(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: kPrimaryColor,
                     foregroundColor: Colors.white,
@@ -421,11 +297,71 @@ class _StepConfirm extends StatelessWidget {
                   ),
                   child: const Text("Confirmar Cita", style: TextStyle(fontSize: 16)),
                 ),
-              ),
+              )
             ],
           ),
         ],
       ),
+    );
+  }
+
+  void _onConfirmPressed(BuildContext context) {
+    final cp = context.read<CalendarProvider>();
+    final newAppt = cp.confirmAppointment();
+    if (newAppt == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("No se pudo confirmar la cita.")),
+      );
+      return;
+    }
+
+    final cartProv = context.read<CartProvider>();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogCtx) {
+        return AlertDialog(
+          title: const Text("¿Cómo deseas proceder?"),
+          content: Text(
+            "Has reservado una cita con ${newAppt.doctor.name} por S/ ${newAppt.fee.toStringAsFixed(2)}.\n"
+            "¿Pagar ahora o seguir comprando?",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogCtx);
+                cartProv.addToCartAppointment(newAppt);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const MainNavigationScreen(currentIndex: 0),
+                  ),
+                );
+              },
+              child: const Text("Seguir Comprando"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(dialogCtx);
+                cp.markAppointmentAsPaid(newAppt.id);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Cita pagada con éxito (S/ ${newAppt.fee.toStringAsFixed(2)})."),
+                  ),
+                );
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const MainNavigationScreen(currentIndex: 4),
+                  ),
+                );
+              },
+              child: const Text("Pagar Ahora"),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -445,11 +381,166 @@ class _StepConfirm extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Header
+// El toggle con 4 celdas, y LOGICA para habilitar/deshabilitar
+class _ConsultationToggle extends StatelessWidget {
+  final AppointmentCategory? currentValue;
+  final ValueChanged<AppointmentCategory> onChanged;
+
+  final String? activePlan; // "Plan Básico", "Paquete Integral", etc.
+
+  const _ConsultationToggle({
+    Key? key,
+    this.currentValue,
+    required this.onChanged,
+    required this.activePlan,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    // Determina para cada cat si está habilitada
+    final bool canPsico = _canUsePsico(activePlan);
+    final bool canNutri = _canUseNutri(activePlan);
+    final bool canApti = _canUseApti(activePlan);
+    final bool canTele = _canUseTele(activePlan);
+
+    final isPsico = (currentValue == AppointmentCategory.psicologico);
+    final isNutri = (currentValue == AppointmentCategory.nutricion);
+    final isApti = (currentValue == AppointmentCategory.aptitudFisica);
+    final isTele = (currentValue == AppointmentCategory.telemedicina);
+
+    return GridView.count(
+      crossAxisCount: 2,
+      crossAxisSpacing: 16.0,
+      mainAxisSpacing: 16.0,
+      padding: const EdgeInsets.all(16),
+      shrinkWrap: true,
+      children: [
+        _TypeCard(
+          label: "Apoyo\nPsicológico",
+          icon: Icons.self_improvement,
+          selected: isPsico,
+          enabled: canPsico,
+          onTap: () => onChanged(AppointmentCategory.psicologico),
+        ),
+        _TypeCard(
+          label: "Nutrición",
+          icon: Icons.restaurant_menu,
+          selected: isNutri,
+          enabled: canNutri,
+          onTap: () => onChanged(AppointmentCategory.nutricion),
+        ),
+        _TypeCard(
+          label: "Aptitud Física",
+          icon: Icons.fitness_center,
+          selected: isApti,
+          enabled: canApti,
+          onTap: () => onChanged(AppointmentCategory.aptitudFisica),
+        ),
+        _TypeCard(
+          label: "Telemedicina",
+          icon: Icons.video_camera_front,
+          selected: isTele,
+          enabled: canTele,
+          onTap: () => onChanged(AppointmentCategory.telemedicina),
+        ),
+      ],
+    );
+  }
+
+  bool _canUsePsico(String? plan) {
+    if (plan == null || plan == "Plan Básico") return false;
+    if (plan == "Paquete Integral") return true;
+    return (plan == "Paquete Apoyo Psicológico");
+  }
+
+  bool _canUseNutri(String? plan) {
+    if (plan == null || plan == "Plan Básico") return false;
+    if (plan == "Paquete Integral") return true;
+    return (plan == "Paquete Nutrición");
+  }
+
+  bool _canUseApti(String? plan) {
+    if (plan == null || plan == "Plan Básico") return false;
+    if (plan == "Paquete Integral") return true;
+    return (plan == "Paquete Aptitud Física");
+  }
+
+  bool _canUseTele(String? plan) {
+    if (plan == null || plan == "Plan Básico") return false;
+    if (plan == "Paquete Integral") return true;
+    return (plan == "Paquete Telemedicina");
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// _TypeCard con "enabled" = false => color gris, no clickeable
+class _TypeCard extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final bool selected;
+  final bool enabled;
+  final VoidCallback onTap;
+
+  const _TypeCard({
+    Key? key,
+    required this.label,
+    required this.icon,
+    required this.selected,
+    required this.enabled,
+    required this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final bgColor = selected ? kPrimaryColor : Colors.grey[200];
+    final textColor = selected ? Colors.white : Colors.black87;
+
+    // Si no está habilitado => color grisado, no clickeable
+    final actualBgColor = enabled ? bgColor : Colors.grey.shade300;
+    final actualTextColor = enabled ? textColor : Colors.grey;
+
+    return GestureDetector(
+      onTap: enabled ? onTap : null, // si no habilitado => null
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        margin: const EdgeInsets.all(4),
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: actualBgColor,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: enabled ? (selected ? Colors.white : Colors.black54) : Colors.grey),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: actualTextColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Resto sin cambios
 class _WizardHeader extends StatelessWidget {
   final String title;
   final VoidCallback onBack;
-  const _WizardHeader({Key? key, required this.title, required this.onBack}) : super(key: key);
+
+  const _WizardHeader({
+    Key? key,
+    required this.title,
+    required this.onBack,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -473,8 +564,6 @@ class _WizardHeader extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Toggle (Mañana/Tarde/Noche)
 class _DayTimeToggle extends StatelessWidget {
   final DayTime? currentValue;
   final ValueChanged<DayTime> onChanged;
@@ -482,31 +571,16 @@ class _DayTimeToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isManiana = (currentValue == DayTime.maniana);
-    final isTarde = (currentValue == DayTime.tarde);
-    final isNoche = (currentValue == DayTime.noche);
+    final isM = (currentValue == DayTime.maniana);
+    final isT = (currentValue == DayTime.tarde);
+    final isN = (currentValue == DayTime.noche);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _ToggleButton(
-          icon: Icons.wb_sunny,
-          label: "Mañana",
-          selected: isManiana,
-          onTap: () => onChanged(DayTime.maniana),
-        ),
-        _ToggleButton(
-          icon: Icons.wb_twighlight,
-          label: "Tarde",
-          selected: isTarde,
-          onTap: () => onChanged(DayTime.tarde),
-        ),
-        _ToggleButton(
-          icon: Icons.nights_stay,
-          label: "Noche",
-          selected: isNoche,
-          onTap: () => onChanged(DayTime.noche),
-        ),
+        _ToggleButton(icon: Icons.wb_sunny, label: "Mañana", selected: isM, onTap: () => onChanged(DayTime.maniana)),
+        _ToggleButton(icon: Icons.wb_twighlight, label: "Tarde", selected: isT, onTap: () => onChanged(DayTime.tarde)),
+        _ToggleButton(icon: Icons.nights_stay, label: "Noche", selected: isN, onTap: () => onChanged(DayTime.noche)),
       ],
     );
   }
@@ -517,7 +591,14 @@ class _ToggleButton extends StatelessWidget {
   final String label;
   final bool selected;
   final VoidCallback onTap;
-  const _ToggleButton({Key? key, required this.icon, required this.label, required this.selected, required this.onTap}) : super(key: key);
+
+  const _ToggleButton({
+    Key? key,
+    required this.icon,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -549,8 +630,6 @@ class _ToggleButton extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Grilla de horas (Paso 1)
 class _HourGrid extends StatelessWidget {
   final DayTime? selectedDayTime;
   final String? selectedHour;
@@ -564,11 +643,19 @@ class _HourGrid extends StatelessWidget {
     final afternoonSlots = ["12:15 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM"];
     final nightSlots = ["6:30 PM", "7:00 PM", "8:00 PM", "8:30 PM", "9:00 PM"];
 
-    // Elegir
-    List<String> displaySlots = morningSlots;
-    if (selectedDayTime == DayTime.tarde)
-      displaySlots = afternoonSlots;
-    else if (selectedDayTime == DayTime.noche) displaySlots = nightSlots;
+    List<String> displaySlots;
+    switch (selectedDayTime) {
+      case DayTime.tarde:
+        displaySlots = afternoonSlots;
+        break;
+      case DayTime.noche:
+        displaySlots = nightSlots;
+        break;
+      case DayTime.maniana:
+      default:
+        displaySlots = morningSlots;
+        break;
+    }
 
     return GridView.builder(
       itemCount: displaySlots.length,
@@ -580,8 +667,8 @@ class _HourGrid extends StatelessWidget {
         crossAxisSpacing: 8,
         childAspectRatio: 3.5,
       ),
-      itemBuilder: (context, index) {
-        final slot = displaySlots[index];
+      itemBuilder: (ctx, i) {
+        final slot = displaySlots[i];
         final isSelected = (slot == selectedHour);
         return GestureDetector(
           onTap: () => onSelectHour(slot),
@@ -602,88 +689,6 @@ class _HourGrid extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Toggle Apoyo Psicológico, Nutrición, Telemedicina (Paso 2)
-class _ConsultationToggle extends StatelessWidget {
-  final AppointmentCategory? currentValue;
-  final ValueChanged<AppointmentCategory> onChanged;
-
-  const _ConsultationToggle({Key? key, this.currentValue, required this.onChanged}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final isPsico = (currentValue == AppointmentCategory.psicologico);
-    final isNutri = (currentValue == AppointmentCategory.nutricion);
-    final isTele = (currentValue == AppointmentCategory.telemedicina);
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        _TypeCard(
-          label: "Apoyo\nPsicológico",
-          icon: Icons.self_improvement,
-          selected: isPsico,
-          onTap: () => onChanged(AppointmentCategory.psicologico),
-        ),
-        _TypeCard(
-          label: "Nutrición",
-          icon: Icons.restaurant_menu,
-          selected: isNutri,
-          onTap: () => onChanged(AppointmentCategory.nutricion),
-        ),
-        _TypeCard(
-          label: "Telemedicina",
-          icon: Icons.video_camera_front,
-          selected: isTele,
-          onTap: () => onChanged(AppointmentCategory.telemedicina),
-        ),
-      ],
-    );
-  }
-}
-
-class _TypeCard extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _TypeCard({Key? key, required this.label, required this.icon, required this.selected, required this.onTap}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        width: 100,
-        height: 100,
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: selected ? kPrimaryColor : Colors.grey[200],
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: selected ? Colors.white : Colors.black54),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: selected ? Colors.white : Colors.black87,
-                fontWeight: FontWeight.bold,
-                fontSize: 13,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

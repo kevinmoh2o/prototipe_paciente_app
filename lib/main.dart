@@ -24,9 +24,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<LoginProvider>(
-          create: (_) => LoginProvider(),
-        ),
+        ChangeNotifierProvider<LoginProvider>(create: (_) => LoginProvider()),
         ChangeNotifierProvider(create: (_) => PatientProvider()),
         ChangeNotifierProvider(create: (_) => HomeProvider()),
         ChangeNotifierProvider(create: (_) => CalendarProvider()),
@@ -38,33 +36,34 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => NutricionProvider()),
         ChangeNotifierProvider(create: (_) => AptitudProvider()),
       ],
-      child: Builder(builder: (context) {
-        final themeProv = context.watch<ThemeProvider>();
-        return MaterialApp(
-          title: 'Onco 360',
-          theme: themeProv.themeData,
-          debugShowCheckedModeBanner: false,
+      child: Builder(
+        builder: (context) {
+          final themeProv = context.watch<ThemeProvider>();
 
-          // El builder se aplica a TODAS las pantallas
-          builder: (context, child) {
-            return Scaffold(
-              // Fondo morado para toda la app
-              //backgroundColor: const Color(0xFF4F47C2),
-              backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+          return MaterialApp(
+            title: 'Onco 360',
+            theme: themeProv.themeData,
+            debugShowCheckedModeBanner: false,
 
-              // Centra el contenido y fija un ancho máximo
-              body: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 500),
-                  // child es la pantalla que se esté mostrando (LoginScreen, etc.)
-                  child: child ?? const SizedBox.shrink(),
+            // Aquí usamos builder para limitar el ancho,
+            // PERO no metemos un Scaffold extra. Solo un Container + Center.
+            builder: (context, child) {
+              // child es la pantalla (LoginScreen, etc.)
+              return Container(
+                // color de fondo que desees para la "app entera"
+                color: const Color.fromARGB(255, 255, 255, 255),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 500),
+                    child: child ?? const SizedBox.shrink(),
+                  ),
                 ),
-              ),
-            );
-          },
-          home: const LoginScreen(),
-        );
-      }),
+              );
+            },
+            home: const LoginScreen(),
+          );
+        },
+      ),
     );
   }
 }

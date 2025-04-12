@@ -1,9 +1,12 @@
-// lib/features/aptitud_fisica/presentation/screen/consulta_entrenador_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+
 import 'package:paciente_app/features/aptitud_fisica/presentation/provider/aptitud_provider.dart';
+import 'package:paciente_app/features/menu_calendar/presentation/provider/calendar_provider.dart';
+import 'package:paciente_app/features/menu_calendar/presentation/screen/calendar_screen.dart';
+
+import 'package:paciente_app/core/data/models/doctor_model.dart';
 
 class ConsultaEntrenadorScreen extends StatelessWidget {
   const ConsultaEntrenadorScreen({Key? key}) : super(key: key);
@@ -23,16 +26,32 @@ class ConsultaEntrenadorScreen extends StatelessWidget {
         itemCount: entrenadores.length,
         itemBuilder: (ctx, i) {
           final ent = entrenadores[i];
+
+          // Convertimos el EntrenadorInfo en un "DoctorModel"
+          final forcedDoctor = DoctorModel(
+            id: "ent_${ent.name}",
+            name: ent.name,
+            specialty: "Entrenador Físico",
+            profileImage: ent.imageAsset,
+            rating: ent.rating,
+            reviewsCount: 15,
+            consultationFee: 40.0, // Ajusta a tu gusto
+          );
+
           return Container(
             margin: const EdgeInsets.only(bottom: 12),
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
-              )
-            ]),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
             child: Row(
               children: [
                 CircleAvatar(
@@ -44,7 +63,10 @@ class ConsultaEntrenadorScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(ent.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text(
+                        ent.name,
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
                       Row(
                         children: [
                           const Icon(Icons.star, size: 16, color: Colors.amber),
@@ -61,29 +83,40 @@ class ConsultaEntrenadorScreen extends StatelessWidget {
                               ent.isOnline ? "Online" : "Offline",
                               style: const TextStyle(color: Colors.white, fontSize: 12),
                             ),
-                          )
+                          ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.video_call, color: Colors.blue),
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Videollamada con ${ent.name}...")));
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(FontAwesomeIcons.whatsapp, color: Colors.green),
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("WhatsApp a ${ent.name}...")));
-                      },
-                    )
-                  ],
-                )
+
+                // BOTÓN para ir a CalendarWizard con skip
+                IconButton(
+                  icon: const Icon(Icons.schedule, color: Colors.blue),
+                  onPressed: () {
+                    final cp = context.read<CalendarProvider>();
+                    // Start wizard for “Aptitud Fisica” => skip cat/doct
+                    cp.startScheduling(
+                      forcedCategory: null, // O creas un AppointmentCategory.aptitud si gustas
+                      forcedDoctor: forcedDoctor,
+                      skipCategoryStep: true,
+                      skipDoctorStep: true,
+                    );
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const CalendarScreen(isarrowBackActive: true),
+                      ),
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(FontAwesomeIcons.whatsapp, color: Colors.green),
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("WhatsApp a ${ent.name} (demo)...")),
+                    );
+                  },
+                ),
               ],
             ),
           );

@@ -26,7 +26,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   final List<Widget> _screens = [
     const HomeScreen(), // index=0
-    const CalendarScreen(), // index=1
+    const CalendarScreen(
+      isarrowBackActive: false,
+    ), // index=1
     const PlanesScreen(), // index=2
     const ProfileScreen(), // index=3
     const CartScreen(), // index=4
@@ -36,7 +38,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   Widget build(BuildContext context) {
     // Observa el cartProv
     final cartProv = context.watch<CartProvider>();
-    final cartCount = cartProv.items.length;
+    final cartCount = cartProv.itemsToal;
 
     return Scaffold(
       body: _screens[_currentIndex],
