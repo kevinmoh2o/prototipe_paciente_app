@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/* import 'package:flutter/material.dart';
 import 'package:paciente_app/features/planes/data/models/plan_model.dart';
 
 class PlanCard extends StatelessWidget {
@@ -86,3 +86,4 @@ class PlanCard extends StatelessWidget {
     );
   }
 }
+ */

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:paciente_app/core/constants/app_constants.dart';
+import 'package:paciente_app/core/data/models/plan_data_model.dart';
 import 'package:paciente_app/features/create_account/presentation/provider/patient_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +18,11 @@ class HomeHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final patientProvider = Provider.of<PatientProvider>(context, listen: false);
     final activePlan = patientProvider.patient.activePlan;
+
+    final PlanData planObj = AppConstants.plans.firstWhere(
+      (plan) => plan.title == activePlan,
+      orElse: () => throw StateError('No se encontró el plan: $activePlan'),
+    );
 
     return SizedBox(
       height: 180,
@@ -37,8 +44,8 @@ class HomeHeader extends StatelessWidget {
               right: 0,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: const BoxDecoration(
-                  color: Colors.amber,
+                decoration: BoxDecoration(
+                  color: planObj.color,
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(12),
                   ),
@@ -46,7 +53,7 @@ class HomeHeader extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.workspace_premium, color: Colors.white, size: 18),
+                    Icon(planObj.icon, color: Colors.white, size: 18),
                     const SizedBox(width: 4),
                     Text(
                       activePlan,

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:paciente_app/core/constants/app_constants.dart';
+import 'package:paciente_app/core/data/models/plan_data_model.dart';
+import 'package:paciente_app/features/create_account/presentation/provider/patient_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:paciente_app/features/menu_calendar/presentation/provider/calendar_provider.dart';
 import 'package:paciente_app/features/menu_calendar/presentation/widget/mini_calendar.dart';
@@ -12,12 +15,55 @@ class CalendarScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cp = context.watch<CalendarProvider>();
+    final patientProvider = Provider.of<PatientProvider>(context, listen: false);
+    final activePlan = patientProvider.patient.activePlan;
+
+    final PlanData planObj = AppConstants.plans.firstWhere(
+      (plan) => plan.title == activePlan,
+      orElse: () => throw StateError('No se encontró el plan: $activePlan'),
+    );
 
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: isarrowBackActive,
-        backgroundColor: const Color(0xFF5B6BF5),
-        title: const Text("Calendario"),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kToolbarHeight),
+        child: SafeArea(
+          child: Container(
+            color: const Color(0xFF5B6BF5),
+            padding: EdgeInsets.zero,
+            margin: EdgeInsets.zero,
+            height: 50,
+            child: Row(
+              children: [
+                const Spacer(),
+                if (activePlan != null)
+                  Container(
+                    height: 40,
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    margin: EdgeInsets.zero,
+                    decoration: BoxDecoration(
+                      color: planObj.color,
+                      borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(12), topLeft: Radius.circular(12)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(planObj.icon, color: Colors.white, size: 18),
+                        const SizedBox(width: 4),
+                        Text(
+                          activePlan,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
       ),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
@@ -55,7 +101,10 @@ class _IdleCalendarView extends StatelessWidget {
           if (appts.isEmpty)
             const Padding(
               padding: EdgeInsets.all(16),
-              child: Text("No tienes citas en esta fecha.", style: TextStyle(fontSize: 16)),
+              child: Text(
+                "No tienes citas en esta fecha.",
+                style: TextStyle(fontSize: 16),
+              ),
             )
           else
             Padding(

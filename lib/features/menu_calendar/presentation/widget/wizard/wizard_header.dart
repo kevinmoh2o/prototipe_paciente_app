@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:paciente_app/features/menu_calendar/presentation/provider/calendar_provider.dart'; // para kPrimaryColor
+/* import 'package:flutter/material.dart';
 
 class WizardHeader extends StatelessWidget {
   final String title;
@@ -28,3 +27,4 @@ class WizardHeader extends StatelessWidget {
     );
   }
 }
+ */

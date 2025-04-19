@@ -28,7 +28,7 @@ class LoginScreen extends StatelessWidget {
                   // LOGO o Imagen principal
                   Image.asset(
                     "assets/images/logo_blanco.png",
-                    scale: 3.5,
+                    scale: 3.0,
                   ),
 
                   const SizedBox(height: 16),

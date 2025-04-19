@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:paciente_app/core/data/models/category_model.dart';
+import 'package:paciente_app/core/data/models/plan_data_model.dart';
+import 'package:paciente_app/core/widgets/upgrade_button_widget.dart';
+import 'package:paciente_app/features/main_navigation/screen/main_navigation_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'package:paciente_app/features/home/presentation/provider/home_provider.dart';
@@ -39,6 +42,10 @@ class _HomeScreenState extends State<HomeScreen> {
     // Tomamos el plan activo
     final patientProv = context.watch<PatientProvider>();
     final activePlan = patientProv.patient.activePlan; // p.e. "Paquete Integral"
+    final PlanData planObj = AppConstants.plans.firstWhere(
+      (plan) => plan.title == activePlan,
+      orElse: () => throw StateError('No se encontró el plan: $activePlan'),
+    );
 
     // Filtramos las categorías según plan
     final allowedCategories = _getAllowedCategories(activePlan);
@@ -52,6 +59,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 userName: homeProv.userName,
                 userAvatar: homeProv.userAvatar,
               ),
+              const SizedBox(height: 8),
+
+              if (activePlan != 'Paquete Integral')
+                UpgradeButton(
+                  color: planObj.color,
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const MainNavigationScreen(currentIndex: 2),
+                      ),
+                    );
+                  },
+                ),
               const SizedBox(height: 16),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
@@ -60,11 +81,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
+
               const SizedBox(height: 8),
               // Usamos la lista filtrada
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: CategoriesGrid(
+                  selectedPlan: activePlan!,
                   categories: allowedCategories,
                   onTapMedicamentos: () => _navigateTo(context, const MedicationScreen()),
                   onTapPsicologiaEspiritual: () => _navigateTo(context, const PsicologiaScreen()),
@@ -105,7 +128,8 @@ class _HomeScreenState extends State<HomeScreen> {
       case null:
       case "Plan Básico":
         // Solo Medicamentos (ya lo tenemos en `filtered`).
-        break;
+        //break;
+        return allCats;
 
       case "Paquete Integral":
         // Todas las categorías: [0..4]
@@ -118,18 +142,21 @@ class _HomeScreenState extends State<HomeScreen> {
         return allCats;
       case "Paquete Apoyo Psicológico":
         // Medicamentos + Apoyo Psicológico
-        filtered.add(allCats[1]);
-        break;
+        //filtered.add(allCats[1]);
+        //break;
+        return allCats;
 
       case "Paquete Nutrición":
         // Medicamentos + Nutrición
-        filtered.add(allCats[2]);
-        break;
+        //filtered.add(allCats[2]);
+        //break;
+        return allCats;
 
       case "Paquete Aptitud Física":
         // Medicamentos + Aptitud Física
-        filtered.add(allCats[3]);
-        break;
+        //filtered.add(allCats[3]);
+        //break;
+        return allCats;
     }
     return filtered;
   }

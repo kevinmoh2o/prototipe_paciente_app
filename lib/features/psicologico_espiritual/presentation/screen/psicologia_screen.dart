@@ -1,6 +1,7 @@
 // lib/features/psicologico_espiritual/presentation/screen/psicologia_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:paciente_app/features/main_navigation/screen/main_navigation_screen.dart';
 import 'package:paciente_app/features/psicologico_espiritual/presentation/screen/evaluacion_inicial_screen.dart';
 import 'package:paciente_app/features/psicologico_espiritual/presentation/screen/consulta_psicologica_screen.dart';
 import 'package:paciente_app/features/psicologico_espiritual/presentation/screen/apoyo_espiritual_screen.dart';
@@ -33,19 +34,6 @@ class PsicologiaScreen extends StatelessWidget {
                 );
               },
             ),
-            /* const SizedBox(height: 12),
-            _SectionCard(
-              title: "Consulta Psicológica",
-              subtitle: "Habla con psicólogos en vivo para asesoría",
-              icon: Icons.psychology,
-              color: Colors.orange,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ConsultaPsicologicaScreen()),
-                );
-              },
-            ), */
             const SizedBox(height: 12),
             _SectionCard(
               title: "Apoyo Espiritual",
@@ -69,6 +57,25 @@ class PsicologiaScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const GruposApoyoScreen()),
+                );
+              },
+            ),
+            const SizedBox(height: 12),
+            _SectionCard(
+              title: "Consulta Psicológica",
+              subtitle: "Habla con psicólogos en vivo para asesoría",
+              icon: Icons.psychology,
+              color: Colors.orange,
+              onTap: () {
+                /* Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ConsultaPsicologicaScreen()),
+                ); */
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const MainNavigationScreen(currentIndex: 1),
+                  ),
                 );
               },
             ),

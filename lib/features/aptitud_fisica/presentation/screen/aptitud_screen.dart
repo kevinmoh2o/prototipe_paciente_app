@@ -5,6 +5,7 @@ import 'package:paciente_app/features/aptitud_fisica/presentation/screen/evaluac
 import 'package:paciente_app/features/aptitud_fisica/presentation/screen/consulta_entrenador_screen.dart';
 import 'package:paciente_app/features/aptitud_fisica/presentation/screen/rutinas_screen.dart';
 import 'package:paciente_app/features/aptitud_fisica/presentation/screen/grupos_aptitud_screen.dart';
+import 'package:paciente_app/features/main_navigation/screen/main_navigation_screen.dart';
 
 class AptitudScreen extends StatelessWidget {
   const AptitudScreen({Key? key}) : super(key: key);
@@ -32,19 +33,6 @@ class AptitudScreen extends StatelessWidget {
                 );
               },
             ),
-            /* const SizedBox(height: 12),
-            _AptitudSectionCard(
-              title: "Consulta con Entrenador",
-              subtitle: "Asesórate con especialistas en ejercicio adaptado",
-              icon: Icons.run_circle,
-              color: Colors.blueAccent,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ConsultaEntrenadorScreen()),
-                );
-              },
-            ), */
             const SizedBox(height: 12),
             _AptitudSectionCard(
               title: "Rutinas Recomendadas",
@@ -68,6 +56,25 @@ class AptitudScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const GruposAptitudScreen()),
+                );
+              },
+            ),
+            const SizedBox(height: 12),
+            _AptitudSectionCard(
+              title: "Consulta con Entrenador",
+              subtitle: "Asesórate con especialistas en ejercicio adaptado",
+              icon: Icons.run_circle,
+              color: Colors.blueAccent,
+              onTap: () {
+                /* Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ConsultaEntrenadorScreen()),
+                ); */
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const MainNavigationScreen(currentIndex: 1),
+                  ),
                 );
               },
             ),

@@ -1,6 +1,7 @@
 // lib/features/nutricion/presentation/screen/nutricion_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:paciente_app/features/main_navigation/screen/main_navigation_screen.dart';
 import 'package:paciente_app/features/nutricion/presentation/screen/evaluacion_nutricional_screen.dart';
 import 'package:paciente_app/features/nutricion/presentation/screen/consulta_nutri_screen.dart';
 import 'package:paciente_app/features/nutricion/presentation/screen/recetas_screen.dart';
@@ -32,19 +33,6 @@ class NutricionScreen extends StatelessWidget {
                 );
               },
             ),
-            /* const SizedBox(height: 12),
-            _NutriSectionCard(
-              title: "Consulta con Nutriólogo",
-              subtitle: "Habla con expertos en nutrición en vivo",
-              icon: Icons.medical_services,
-              color: Colors.orange,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ConsultaNutriScreen()),
-                );
-              },
-            ), */
             const SizedBox(height: 12),
             _NutriSectionCard(
               title: "Recetas Saludables",
@@ -68,6 +56,25 @@ class NutricionScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const GruposNutricionScreen()),
+                );
+              },
+            ),
+            const SizedBox(height: 12),
+            _NutriSectionCard(
+              title: "Consulta con Nutriólogo",
+              subtitle: "Habla con expertos en nutrición en vivo",
+              icon: Icons.medical_services,
+              color: Colors.orange,
+              onTap: () {
+                /* Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ConsultaNutriScreen()),
+                ); */
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const MainNavigationScreen(currentIndex: 1),
+                  ),
                 );
               },
             ),

@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:paciente_app/features/cart/presentation/provider/cart_provider.dart';
 import 'package:paciente_app/features/menu_calendar/presentation/provider/calendar_provider.dart';
 import 'package:paciente_app/features/cart/data/services/payment_service.dart';
-import 'package:paciente_app/features/cart/data/models/payment_method_model.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({Key? key}) : super(key: key);
@@ -19,10 +18,10 @@ class CartScreen extends StatelessWidget {
     final total = cartProv.grandTotal;
 
     return Scaffold(
-      appBar: AppBar(
+      /* appBar: AppBar(
         title: const Text("Carrito"),
         backgroundColor: const Color(0xFF5B6BF5),
-      ),
+      ), */
       body: Column(
         children: [
           // Lista de CITAS

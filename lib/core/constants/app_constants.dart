@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:paciente_app/core/data/models/category_model.dart';
 import 'package:paciente_app/core/data/models/doctor_model.dart';
 import 'package:paciente_app/core/data/models/plan_data_model.dart';
@@ -304,7 +305,7 @@ class AppConstants {
       consultationFee: 150, // Precio en soles
       profileImage: "assets/images/doctor_female_3.png",
     ),
-    /* DoctorModel(
+    DoctorModel(
       id: '9',
       name: "Dr. Alejandro Pinto",
       specialty: "Oncología Pediátrica",
@@ -366,7 +367,7 @@ class AppConstants {
       reviewsCount: 33,
       consultationFee: 250, // Precio en soles
       profileImage: "assets/images/doctor_male_6.png",
-    ), */
+    ),
     DoctorModel(
       id: '16',
       name: "Dra. Gabriela Contreras",
@@ -376,7 +377,7 @@ class AppConstants {
       consultationFee: 160, // Precio en soles
       profileImage: "assets/images/doctor_female_7.png",
     ),
-    DoctorModel(
+    /* DoctorModel(
       id: '17',
       name: "Dr. Fernando Huertas",
       specialty: "Psico-Oncólogo",
@@ -384,7 +385,7 @@ class AppConstants {
       reviewsCount: 18,
       consultationFee: 150, // Precio en soles
       profileImage: "assets/images/doctor_male_7.png",
-    ),
+    ), */
     DoctorModel(
       id: '18',
       name: "Dra. Natalia Jiménez",
@@ -403,7 +404,7 @@ class AppConstants {
       consultationFee: 200, // Precio en soles
       profileImage: "assets/images/doctor_male_8.png",
     ),
-    DoctorModel(
+    /* DoctorModel(
       id: '20',
       name: "Dra. Paula Montiel",
       specialty: "Apoyo Psicológico Oncológico",
@@ -411,7 +412,7 @@ class AppConstants {
       reviewsCount: 20,
       consultationFee: 140, // Precio en soles
       profileImage: "assets/images/doctor_female_9.png",
-    ),
+    ), */
     DoctorModel(
       id: '21',
       name: "Dr. Ricardo Contreras",
@@ -477,7 +478,7 @@ class AppConstants {
     ),
   ];
 
-  static final List<PlanModel> samplePlans = [
+  /* static final List<PlanModel> samplePlans = [
     PlanModel(
       title: "Paquete Integral",
       price: 175.0,
@@ -508,55 +509,86 @@ class AppConstants {
         "Planes de alimentación oncológica",
       ],
     )
-  ];
+  ]; */
 
-  // LiAsta de planes interna
   static final List<PlanData> plans = [
     PlanData(
       title: "Plan Básico",
-      price: 0.0, // Puede ser gratuito o con un precio simbólico
+      price: 0.0,
+      physicianPrice: 0.0,
       discount: 0.0,
       description: "Plan básico sin acceso a los beneficios exclusivos. El usuario puede cancelar en cualquier momento.",
-      benefits: ["Acceso limitado a contenido", "Posibilidad de cancelar en cualquier momento"],
+      benefits: [
+        "Acceso limitado a contenido",
+        "Posibilidad de cancelar en cualquier momento",
+      ],
+      icon: Icons.star_border,
+      color: const Color.fromARGB(255, 124, 124, 124),
     ),
     PlanData(
       title: "Paquete Integral",
       price: 175.0,
+      physicianPrice: 0.0,
       discount: 0.23,
       description: "Acceso a todos los paquetes: Medicamentos, Telemedicina, Apoyo Psicológico y Nutrición/Aptitud Física.",
-      benefits: ["Consultas de telemedicina ilimitadas", "Medicamentos con descuentos", "Apoyo psicológico 24/7", "Nutrición y aptitud física"],
+      benefits: [
+        "Consultas de telemedicina ilimitadas",
+        "Medicamentos con descuentos",
+        "Apoyo psicológico 24/7",
+        "Nutrición y aptitud física",
+      ],
+      icon: Icons.health_and_safety,
+      color: Colors.pink,
     ),
     PlanData(
       title: "Paquete Telemedicina",
       price: 70.0,
+      physicianPrice: 70.0,
       discount: 0.10,
       description: "Consultas virtuales con especialistas oncológicos.",
-      benefits: ["Consultas médicas virtuales", "Soporte oncológico prioritario"],
+      benefits: [
+        "Consultas médicas virtuales",
+        "Soporte oncológico prioritario",
+      ],
+      icon: Icons.medical_services,
+      color: Colors.teal,
     ),
     PlanData(
       title: "Paquete Apoyo Psicológico",
       price: 50.0,
+      physicianPrice: 50.0,
       discount: 0.23,
-      description: "Acceso a consultas de apoyo psicológico y espiritual",
-      benefits: ["Sesiones de psicología oncológica", "Terapia grupal virtual"],
+      description: "Acceso a consultas de apoyo psicológico y espiritual.",
+      benefits: [
+        "Sesiones de psicología oncológica",
+        "Terapia grupal virtual",
+      ],
+      icon: Icons.psychology,
+      color: Colors.purple,
     ),
     PlanData(
       title: "Paquete Nutrición",
       price: 50.0,
+      physicianPrice: 50.0,
       discount: 0.23,
-      description: "Acceso a consultas de nutrición",
+      description: "Acceso a consultas de nutrición.",
       benefits: [
         "Planes de alimentación oncológica",
       ],
+      icon: Icons.restaurant,
+      color: Colors.orange,
     ),
     PlanData(
       title: "Paquete Aptitud Física",
       price: 50.0,
+      physicianPrice: 50.0,
       discount: 0.23,
-      description: "Acceso a programas de aptitud física",
+      description: "Acceso a programas de aptitud física.",
       benefits: [
         "Rutinas adaptadas",
       ],
-    )
+      icon: Icons.fitness_center,
+      color: Colors.green,
+    ),
   ];
 }

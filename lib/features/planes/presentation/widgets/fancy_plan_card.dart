@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
+/* import 'package:flutter/material.dart';
 import 'package:paciente_app/core/data/models/plan_data_model.dart';
-import 'package:paciente_app/features/planes/presentation/screen/planes_screen.dart';
 
 class FancyPlanCard extends StatelessWidget {
   final PlanData plan;
@@ -110,3 +109,4 @@ class FancyPlanCard extends StatelessWidget {
     );
   }
 }
+ */

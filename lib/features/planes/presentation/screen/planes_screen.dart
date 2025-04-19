@@ -179,9 +179,11 @@ class _PlanesScreenState extends State<PlanesScreen> {
   }) {
     final discountText = (plan.discount != null) ? "Ahorre ${(plan.discount! * 100).toStringAsFixed(0)}%" : null;
 
-    final bgColor = isSelected ? const Color(0xFF5B6BF5) : Colors.white;
+    // Colores base según selección y datos del plan
+    final bgColor = isSelected ? plan.color : Colors.white;
     final textColor = isSelected ? Colors.white : Colors.black87;
-    final greenColor = isSelected ? const Color.fromARGB(255, 144, 246, 116) : Colors.green;
+    // Si está seleccionado, aclaramos el color para iconos/checks
+    final accentColor = isSelected ? plan.color.withOpacity(0.7) : plan.color;
 
     return Container(
       decoration: BoxDecoration(
@@ -195,17 +197,23 @@ class _PlanesScreenState extends State<PlanesScreen> {
           ),
         ],
       ),
-      // Para evitar overflow interno si el contenido del plan es muy alto:
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
         child: Stack(
           children: [
-            // Scroll interno dentro de la tarjeta
             SingleChildScrollView(
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  // Icono del plan
+                  Icon(
+                    plan.icon,
+                    size: 40,
+                    color: isSelected ? Colors.white : plan.color,
+                  ),
+                  const SizedBox(height: 12),
+
                   // Título
                   Text(
                     plan.title,
@@ -216,7 +224,7 @@ class _PlanesScreenState extends State<PlanesScreen> {
                       color: textColor,
                     ),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 20),
 
                   // Precio
                   Row(
@@ -228,7 +236,7 @@ class _PlanesScreenState extends State<PlanesScreen> {
                         style: TextStyle(
                           fontSize: 50,
                           fontWeight: FontWeight.bold,
-                          color: isSelected ? Colors.white : Colors.indigo,
+                          color: isSelected ? Colors.white : plan.color,
                         ),
                       ),
                       const SizedBox(width: 4),
@@ -237,12 +245,12 @@ class _PlanesScreenState extends State<PlanesScreen> {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: isSelected ? Colors.white70 : Colors.indigo,
+                          color: isSelected ? Colors.white70 : plan.color.withOpacity(0.8),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 24),
 
                   // Descripción
                   Text(
@@ -255,30 +263,33 @@ class _PlanesScreenState extends State<PlanesScreen> {
                   // Beneficios
                   Column(
                     children: plan.benefits.map((b) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.check, color: greenColor, size: 16),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              b,
-                              style: TextStyle(fontSize: 14, color: textColor),
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.check, color: isSelected ? Colors.white : plan.color, size: 18),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                b,
+                                style: TextStyle(fontSize: 14, color: textColor),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       );
                     }).toList(),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
 
-                  // Botón discount
+                  // Botón de descuento (si existe)
                   if (discountText != null)
                     ElevatedButton(
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: isSelected ? Colors.white.withOpacity(0.1) : Colors.blue.shade600,
-                        foregroundColor: Colors.white,
+                        backgroundColor: isSelected ? Colors.white.withOpacity(0.1) : plan.color.withOpacity(0.9),
+                        foregroundColor: isSelected ? Colors.white : Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -289,7 +300,7 @@ class _PlanesScreenState extends State<PlanesScreen> {
                       ),
                       child: Text(discountText),
                     ),
-                  const SizedBox(height: 10),
+                  if (discountText != null) const SizedBox(height: 12),
 
                   // Botón Escoger Plan
                   SizedBox(
@@ -298,17 +309,17 @@ class _PlanesScreenState extends State<PlanesScreen> {
                     child: ElevatedButton(
                       onPressed: onChoose,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: isSelected ? Colors.white.withOpacity(0.85) : const Color(0xFF324BB8),
-                        foregroundColor: Colors.white,
+                        backgroundColor: isSelected ? Colors.white.withOpacity(0.85) : plan.color,
+                        foregroundColor: isSelected ? plan.color : Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
                       child: Text(
-                        "Escoger Plan",
+                        isSelected ? "Seleccionado" : "Escoger Plan",
                         style: TextStyle(
                           fontSize: 16,
-                          color: isSelected ? Colors.black : Colors.white,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
@@ -317,7 +328,7 @@ class _PlanesScreenState extends State<PlanesScreen> {
               ),
             ),
 
-            // "Ribbon" si es el plan actual
+            // Ribbon para el plan actual
             if (isSelected)
               Positioned(
                 top: 0,
@@ -327,18 +338,18 @@ class _PlanesScreenState extends State<PlanesScreen> {
                     horizontal: 8,
                     vertical: 4,
                   ),
-                  decoration: const BoxDecoration(
-                    color: Colors.green,
-                    borderRadius: BorderRadius.only(
+                  decoration: BoxDecoration(
+                    color: accentColor,
+                    borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(8),
                       topRight: Radius.circular(12),
                     ),
                   ),
                   child: Row(
-                    children: const [
+                    children: [
                       Icon(Icons.check, color: Colors.white, size: 20),
-                      SizedBox(width: 4),
-                      Text(
+                      const SizedBox(width: 4),
+                      const Text(
                         "Plan Actual",
                         style: TextStyle(color: Colors.white, fontSize: 15),
                       ),

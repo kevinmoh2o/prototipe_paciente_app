@@ -1,4 +1,209 @@
+// features/menu_calendar/presentation/provider/calendar_provider.dart
 import 'package:flutter/material.dart';
+import 'package:paciente_app/core/constants/app_constants.dart';
+import 'package:paciente_app/core/data/models/doctor_model.dart';
+import 'package:uuid/uuid.dart';
+
+enum CalendarFlowStep { idle, category, hourAndDayTime, doctor, confirm }
+
+enum DayTime { maniana, tarde, noche }
+
+enum AppointmentCategory { psicologico, nutricion, telemedicina, aptitudFisica }
+
+class AppointmentModel {
+  final String id;
+  final DateTime dateTime;
+  final String patientName;
+  final DoctorModel doctor;
+  final bool isTelemedicine;
+  bool isPaid;
+  final double fee;
+
+  AppointmentModel({
+    required this.dateTime,
+    required this.patientName,
+    required this.doctor,
+    this.isTelemedicine = false,
+    this.isPaid = false,
+    required this.fee,
+    String? id,
+  }) : id = id ?? const Uuid().v4();
+}
+
+class CalendarProvider extends ChangeNotifier {
+  DateTime _selectedDate = DateTime.now();
+  CalendarFlowStep _currentStep = CalendarFlowStep.idle;
+  DayTime? _selectedDayTime = DayTime.maniana;
+  String? _selectedHour;
+  AppointmentCategory? _selectedCategory;
+  DoctorModel? _selectedDoctor;
+
+  bool _skipCategoryStep = false;
+  bool _skipDoctorStep = false;
+
+  final List<AppointmentModel> _allAppointments = [];
+  final List<DoctorModel> _allDoctors = AppConstants.calendarDoctors;
+
+  DateTime get selectedDate => _selectedDate;
+  CalendarFlowStep get currentStep => _currentStep;
+  DayTime? get selectedDayTime => _selectedDayTime;
+  String? get selectedHour => _selectedHour;
+  AppointmentCategory? get selectedCategory => _selectedCategory;
+  DoctorModel? get selectedDoctor => _selectedDoctor;
+  List<AppointmentModel> get allAppointments => _allAppointments;
+
+  List<AppointmentModel> get appointmentsForSelectedDate {
+    final daily = _allAppointments
+        .where((a) => a.dateTime.year == _selectedDate.year && a.dateTime.month == _selectedDate.month && a.dateTime.day == _selectedDate.day)
+        .toList()
+      ..sort((a, b) => a.dateTime.compareTo(b.dateTime));
+    return daily;
+  }
+
+  List<DoctorModel> get filteredDoctors {
+    if (_selectedCategory == null) return [];
+    switch (_selectedCategory!) {
+      case AppointmentCategory.psicologico:
+        return _allDoctors.where((d) => d.specialty.toLowerCase().contains('psico')).toList();
+      case AppointmentCategory.nutricion:
+        return _allDoctors.where((d) => d.specialty.toLowerCase().contains('nutric')).toList();
+      case AppointmentCategory.telemedicina:
+        return _allDoctors.where((d) => d.specialty.toLowerCase().contains('oncol')).toList();
+      case AppointmentCategory.aptitudFisica:
+        return _allDoctors.where((d) => d.specialty.toLowerCase().contains('ptitud')).toList();
+    }
+  }
+
+  void selectDate(DateTime date) {
+    _selectedDate = date;
+    if (_currentStep != CalendarFlowStep.idle) {
+      resetNewAppointment();
+      _currentStep = CalendarFlowStep.idle;
+    }
+    notifyListeners();
+  }
+
+  void startScheduling({
+    AppointmentCategory? forcedCategory,
+    DoctorModel? forcedDoctor,
+    bool skipCategoryStep = false,
+    bool skipDoctorStep = false,
+  }) {
+    _skipCategoryStep = skipCategoryStep;
+    _skipDoctorStep = skipDoctorStep;
+    if (forcedCategory != null) _selectedCategory = forcedCategory;
+    if (forcedDoctor != null) _selectedDoctor = forcedDoctor;
+
+    _currentStep = _skipCategoryStep ? (_skipDoctorStep ? CalendarFlowStep.confirm : CalendarFlowStep.hourAndDayTime) : CalendarFlowStep.category;
+    notifyListeners();
+  }
+
+  void backStep() {
+    switch (_currentStep) {
+      case CalendarFlowStep.category:
+        resetNewAppointment();
+        _currentStep = CalendarFlowStep.idle;
+        break;
+      case CalendarFlowStep.hourAndDayTime:
+        _currentStep = _skipCategoryStep ? CalendarFlowStep.idle : CalendarFlowStep.category;
+        break;
+      case CalendarFlowStep.doctor:
+        _currentStep = CalendarFlowStep.hourAndDayTime;
+        break;
+      case CalendarFlowStep.confirm:
+        _currentStep = _skipDoctorStep ? CalendarFlowStep.hourAndDayTime : CalendarFlowStep.doctor;
+        break;
+      case CalendarFlowStep.idle:
+        break;
+    }
+    notifyListeners();
+  }
+
+  void nextStep() {
+    switch (_currentStep) {
+      case CalendarFlowStep.category:
+        _currentStep = CalendarFlowStep.hourAndDayTime;
+        break;
+      case CalendarFlowStep.hourAndDayTime:
+        _currentStep = _skipDoctorStep ? CalendarFlowStep.confirm : CalendarFlowStep.doctor;
+        break;
+      case CalendarFlowStep.doctor:
+        _currentStep = CalendarFlowStep.confirm;
+        break;
+      default:
+        break;
+    }
+    notifyListeners();
+  }
+
+  void selectDayTime(DayTime dt) {
+    _selectedDayTime = dt;
+    _selectedHour = null;
+    notifyListeners();
+  }
+
+  void selectHour(String hour) {
+    _selectedHour = hour;
+    notifyListeners();
+  }
+
+  void selectCategory(AppointmentCategory cat) {
+    _selectedCategory = cat;
+    notifyListeners();
+  }
+
+  void selectDoctor(DoctorModel doc) {
+    _selectedDoctor = doc;
+    notifyListeners();
+  }
+
+  DateTime? get newAppointmentDateTime {
+    if (_selectedHour == null) return null;
+    final parts = _selectedHour!.split(' ');
+    final hm = parts[0].split(':');
+    int hour = int.parse(hm[0]);
+    final minute = int.parse(hm[1]);
+    if (parts[1] == 'PM' && hour < 12) hour += 12;
+    if (parts[1] == 'AM' && hour == 12) hour = 0;
+    return DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, hour, minute);
+  }
+
+  AppointmentModel? confirmAppointment() {
+    if (_selectedDoctor == null || newAppointmentDateTime == null) return null;
+    final appt = AppointmentModel(
+      dateTime: newAppointmentDateTime!,
+      patientName: 'Paciente Demo',
+      doctor: _selectedDoctor!,
+      isTelemedicine: _selectedCategory == AppointmentCategory.telemedicina,
+      fee: _selectedDoctor!.consultationFee,
+    );
+    _allAppointments.add(appt);
+    notifyListeners();
+    resetNewAppointment();
+    _currentStep = CalendarFlowStep.idle;
+    return appt;
+  }
+
+  void markAppointmentAsPaid(String id) {
+    final idx = _allAppointments.indexWhere((a) => a.id == id);
+    if (idx != -1) {
+      _allAppointments[idx].isPaid = true;
+      notifyListeners();
+    }
+  }
+
+  void resetNewAppointment() {
+    _selectedDayTime = DayTime.maniana;
+    _selectedHour = null;
+    _selectedCategory = null;
+    _selectedDoctor = null;
+    _skipCategoryStep = false;
+    _skipDoctorStep = false;
+  }
+}
+
+
+/* import 'package:flutter/material.dart';
 import 'package:paciente_app/core/constants/app_constants.dart';
 import 'package:paciente_app/core/data/models/doctor_model.dart';
 import 'package:uuid/uuid.dart';
@@ -85,7 +290,10 @@ class CalendarProvider extends ChangeNotifier {
       case AppointmentCategory.nutricion:
         return _allDoctors.where((doc) => doc.specialty.toLowerCase().contains("nutric")).toList();
       case AppointmentCategory.telemedicina:
-        return _allDoctors.where((doc) => doc.specialty.toLowerCase().contains("oncol")).toList();
+        return _allDoctors.where((doc) {
+          final specialty = doc.specialty.toLowerCase();
+          return specialty.contains("oncol") && !specialty.contains("psico") && !specialty.contains("nutric") && !specialty.contains("ptitud");
+        }).toList();
       case AppointmentCategory.aptitudFisica:
         return _allDoctors.where((doc) => doc.specialty.toLowerCase().contains("ptitud")).toList();
     }
@@ -269,3 +477,4 @@ class CalendarProvider extends ChangeNotifier {
     _skipDoctorStep = false;
   }
 }
+ */
