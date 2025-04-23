@@ -34,6 +34,33 @@ class CalendarScreen extends StatelessWidget {
             height: 50,
             child: Row(
               children: [
+                if (patientProvider.patient.counterPAqueteIntegral! > 0)
+                  Container(
+                    height: 40,
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    margin: EdgeInsets.zero,
+                    decoration: BoxDecoration(
+                      color: Color(0xFF4CAF50),
+                      borderRadius: const BorderRadius.only(bottomRight: Radius.circular(12), topRight: Radius.circular(12)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.money_off, color: Colors.white, size: 15),
+                        const SizedBox(width: 4),
+                        Text(
+                          patientProvider.patient.counterPAqueteIntegral! > 1
+                              ? "${patientProvider.patient.counterPAqueteIntegral} citas gratis"
+                              : "${patientProvider.patient.counterPAqueteIntegral} cita gratis",
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 const Spacer(),
                 if (activePlan != null)
                   Container(

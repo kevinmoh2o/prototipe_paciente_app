@@ -1,5 +1,6 @@
 // lib/features/menu_calendar/presentation/widget/wizard/calendar_wizard.dart
 import 'package:flutter/material.dart';
+import 'package:paciente_app/core/data/models/patient_model.dart';
 import 'package:provider/provider.dart';
 
 import 'package:paciente_app/features/menu_calendar/presentation/provider/calendar_provider.dart';
@@ -121,6 +122,7 @@ class _StepDoctor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cp = context.watch<CalendarProvider>();
+    final PatientModel patient = context.watch<PatientProvider>().patient;
     final String? plan = context.watch<PatientProvider>().patient.activePlan;
     final docs = cp.filteredDoctors;
 
@@ -142,8 +144,9 @@ class _StepDoctor extends StatelessWidget {
                 final bool selected = cp.selectedDoctor == doc;
 
                 double fee = doc.consultationFee;
-                if (plan == 'Paquete Telemedicina') fee = 70;
-                if (plan == 'Paquete Apoyo Psicológico' || plan == 'Paquete Nutrición' || plan == 'Paquete Aptitud Física') fee = 50;
+                //if (plan == 'Paquete Telemedicina') fee = 70;
+                //if (plan == 'Paquete Apoyo Psicológico' || plan == 'Paquete Nutrición' || plan == 'Paquete Aptitud Física') fee = 50;
+                if (patient.counterPAqueteIntegral! > 0 && plan == 'Paquete Integral') fee = 0;
 
                 return GestureDetector(
                   onTap: () => cp.selectDoctor(doc),
@@ -243,6 +246,8 @@ class _StepConfirm extends StatelessWidget {
 
   void _onConfirmPressed(BuildContext context) {
     final cp = context.read<CalendarProvider>();
+    //final pp = context.read<PatientProvider>();
+    final pp = Provider.of<PatientProvider>(context, listen: false);
     final newAppt = cp.confirmAppointment();
     if (newAppt == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -252,6 +257,8 @@ class _StepConfirm extends StatelessWidget {
     }
 
     final cartProv = context.read<CartProvider>();
+
+    pp.subtract();
 
     showDialog(
       context: context,

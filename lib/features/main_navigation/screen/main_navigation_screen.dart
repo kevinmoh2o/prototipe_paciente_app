@@ -1,5 +1,7 @@
+// lib/features/main_navigation/screen/main_navigation_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:paciente_app/features/home/presentation/screen/home_screen.dart';
 import 'package:paciente_app/features/menu_calendar/presentation/screen/calendar_screen.dart';
 import 'package:paciente_app/features/planes/presentation/screen/planes_screen.dart';
@@ -9,7 +11,13 @@ import 'package:paciente_app/features/cart/presentation/provider/cart_provider.d
 
 class MainNavigationScreen extends StatefulWidget {
   final int currentIndex;
-  const MainNavigationScreen({Key? key, required this.currentIndex}) : super(key: key);
+  final int planesInitialIndex; // 🆕 índice inicial para PlanesScreen
+
+  const MainNavigationScreen({
+    Key? key,
+    required this.currentIndex,
+    this.planesInitialIndex = 0, // por defecto 0
+  }) : super(key: key);
 
   @override
   State<MainNavigationScreen> createState() => _MainNavigationScreenState();
@@ -24,67 +32,50 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     _currentIndex = widget.currentIndex;
   }
 
-  final List<Widget> _screens = [
-    const HomeScreen(), // index=0
-    const CalendarScreen(
-      isarrowBackActive: false,
-    ), // index=1
-    const PlanesScreen(), // index=2
-    const ProfileScreen(), // index=3
-    const CartScreen(), // index=4
+  late final List<Widget> _screens = [
+    const HomeScreen(), // 0
+    const CalendarScreen(isarrowBackActive: false), // 1
+    PlanesScreen(initialIndex: widget.planesInitialIndex), // 2  🆕
+    const ProfileScreen(), // 3
+    const CartScreen(), // 4
   ];
 
   @override
   Widget build(BuildContext context) {
-    // Observa el cartProv
     final cartProv = context.watch<CartProvider>();
     final cartCount = cartProv.itemsToal;
 
-    return Scaffold(
-      body: _screens[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        selectedItemColor: const Color(0xFF5B6BF5),
-        unselectedItemColor: Colors.grey,
-        onTap: (index) {
-          setState(() => _currentIndex = index);
-        },
-        // OJO: no uses 'const' en items, porq necesitamos cartCount
-        items: [
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Inicio",
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month),
-            label: "Calendario",
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.assessment),
-            label: "Planes",
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: "Perfil",
-          ),
-          BottomNavigationBarItem(
-            icon: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                const Icon(Icons.shopping_cart),
-                if (cartCount > 0)
-                  Positioned(
-                    right: -2,
-                    top: -6,
-                    child: _PulsingBadge(
-                      count: cartCount,
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        body: _screens[_currentIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          selectedItemColor: const Color(0xFF5B6BF5),
+          unselectedItemColor: Colors.grey,
+          onTap: (i) => setState(() => _currentIndex = i),
+          items: [
+            const BottomNavigationBarItem(icon: Icon(Icons.home), label: "Inicio"),
+            const BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: "Calendario"),
+            const BottomNavigationBarItem(icon: Icon(Icons.assessment), label: "Planes"),
+            const BottomNavigationBarItem(icon: Icon(Icons.person), label: "Perfil"),
+            BottomNavigationBarItem(
+              icon: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  const Icon(Icons.shopping_cart),
+                  if (cartCount > 0)
+                    Positioned(
+                      right: -2,
+                      top: -6,
+                      child: _PulsingBadge(count: cartCount),
                     ),
-                  )
-              ],
+                ],
+              ),
+              label: "Carrito",
             ),
-            label: "Carrito",
-          )
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -29,6 +29,7 @@ class PatientModel {
   // Para checkbox de términos
   bool aceptoTerminos;
   String? activePlan;
+  int? counterPAqueteIntegral;
 
   PatientModel({
     this.nombre,
@@ -52,6 +53,7 @@ class PatientModel {
     this.numeroEmergencia,
     this.aceptoTerminos = false,
     this.activePlan = '',
+    this.counterPAqueteIntegral = 0,
   });
 
   Map<String, dynamic> toMap() {
@@ -77,6 +79,7 @@ class PatientModel {
       'numeroEmergencia': numeroEmergencia,
       'aceptoTerminos': aceptoTerminos,
       'activePlan': activePlan,
+      'counterPAqueteIntegral': counterPAqueteIntegral,
     };
   }
 
@@ -108,11 +111,12 @@ class PatientModel {
       numeroEmergencia: map['numeroEmergencia'],
       aceptoTerminos: map['aceptoTerminos'] ?? false,
       activePlan: map['activePlan'],
+      counterPAqueteIntegral: map['counterPAqueteIntegral'],
     );
   }
 
   @override
   String toString() {
-    return 'PatientModel(nombre: $nombre, apellidoPaterno: $apellidoPaterno, apellidoMaterno: $apellidoMaterno, genero: $genero, fechaNacimiento: $fechaNacimiento, telefono: $telefono, correo: $correo, password: $password, diagnostico: $diagnostico, grado: $grado, restriccionesAlimentacion: $restriccionesAlimentacion, otrasEnfermedades: $otrasEnfermedades, talla: $talla, peso: $peso, tipoSeguro: $tipoSeguro, centroTratamiento: $centroTratamiento, nombreFamiliar: $nombreFamiliar, relacionFamiliar: $relacionFamiliar, numeroEmergencia: $numeroEmergencia, aceptoTerminos: $aceptoTerminos, activePlan: $activePlan)';
+    return 'PatientModel(nombre: $nombre, apellidoPaterno: $apellidoPaterno, apellidoMaterno: $apellidoMaterno, genero: $genero, fechaNacimiento: $fechaNacimiento, telefono: $telefono, correo: $correo, password: $password, diagnostico: $diagnostico, grado: $grado, restriccionesAlimentacion: $restriccionesAlimentacion, otrasEnfermedades: $otrasEnfermedades, talla: $talla, peso: $peso, tipoSeguro: $tipoSeguro, centroTratamiento: $centroTratamiento, nombreFamiliar: $nombreFamiliar, relacionFamiliar: $relacionFamiliar, numeroEmergencia: $numeroEmergencia, aceptoTerminos: $aceptoTerminos, activePlan: $activePlan, counterPAqueteIntegral: $counterPAqueteIntegral)';
   }
 }

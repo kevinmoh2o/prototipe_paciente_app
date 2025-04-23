@@ -230,33 +230,38 @@ class AppConstants {
       iconPath: "assets/icons/estirado.png",
       description: "Ejercicio y rutinas adaptadas",
     ),
+    CategoryModel(
+      title: "Telemedicina",
+      iconPath: "assets/icons/telemedicine.png",
+      description: "Videoconsultas seguras y seguimiento remoto",
+    ),
   ];
 
   static final List<DoctorModel> topDoctors = [
     DoctorModel(
-      id: '1',
-      name: "Dra. Olivia Valdivia",
-      specialty: "Nutricionista",
-      rating: 4.9,
-      reviewsCount: 37,
-      profileImage: "assets/images/doctor_female_1.png",
-    ),
+        id: '1',
+        name: "Dra. Olivia Valdivia",
+        specialty: "Nutricionista",
+        rating: 4.9,
+        reviewsCount: 37,
+        profileImage: "assets/images/doctor_female_1.png",
+        consultationFee: 75.0),
     DoctorModel(
-      id: '2',
-      name: "Dr. Jonathan Rodríguez",
-      specialty: "Psicólogo",
-      rating: 4.8,
-      reviewsCount: 29,
-      profileImage: "assets/images/doctor_male_1.png",
-    ),
+        id: '2',
+        name: "Dr. Jonathan Rodríguez",
+        specialty: "Psicólogo",
+        rating: 4.8,
+        reviewsCount: 29,
+        profileImage: "assets/images/doctor_male_1.png",
+        consultationFee: 100.0),
     DoctorModel(
-      id: '3',
-      name: "Dra. Melissa Suárez",
-      specialty: "Oncóloga",
-      rating: 4.7,
-      reviewsCount: 45,
-      profileImage: "assets/images/doctor_female_2.png",
-    ),
+        id: '3',
+        name: "Dra. Melissa Suárez",
+        specialty: "Oncóloga",
+        rating: 4.7,
+        reviewsCount: 45,
+        profileImage: "assets/images/doctor_female_2.png",
+        consultationFee: 150.00),
   ];
 
   static final List<DoctorModel> calendarDoctors = [
@@ -266,7 +271,7 @@ class AppConstants {
       specialty: "Psico-Oncóloga",
       rating: 4.9,
       reviewsCount: 37,
-      consultationFee: 150, // Precio en soles
+      consultationFee: 100, // Precio en soles
       profileImage: "assets/images/doctor_female_1.png",
     ),
     DoctorModel(
@@ -275,7 +280,7 @@ class AppConstants {
       specialty: "Psico-Oncólogo",
       rating: 4.8,
       reviewsCount: 25,
-      consultationFee: 160, // Precio en soles
+      consultationFee: 100, // Precio en soles
       profileImage: "assets/images/doctor_male_1.png",
     ),
     DoctorModel(
@@ -284,7 +289,7 @@ class AppConstants {
       specialty: "Nutrióloga Oncóloga",
       rating: 4.7,
       reviewsCount: 45,
-      consultationFee: 140, // Precio en soles
+      consultationFee: 75, // Precio en soles
       profileImage: "assets/images/doctor_female_2.png",
     ),
     DoctorModel(
@@ -293,7 +298,7 @@ class AppConstants {
       specialty: "Oncología Médica",
       rating: 4.8,
       reviewsCount: 30,
-      consultationFee: 200, // Precio en soles
+      consultationFee: 150, // Precio en soles
       profileImage: "assets/images/doctor_male_2.png",
     ),
     DoctorModel(
@@ -302,7 +307,7 @@ class AppConstants {
       specialty: "Psico-Oncóloga",
       rating: 4.9,
       reviewsCount: 22,
-      consultationFee: 150, // Precio en soles
+      consultationFee: 100, // Precio en soles
       profileImage: "assets/images/doctor_female_3.png",
     ),
     DoctorModel(
@@ -311,7 +316,7 @@ class AppConstants {
       specialty: "Oncología Pediátrica",
       rating: 4.6,
       reviewsCount: 19,
-      consultationFee: 220, // Precio en soles
+      consultationFee: 150, // Precio en soles
       profileImage: "assets/images/doctor_male_3.png",
     ),
     DoctorModel(
@@ -320,7 +325,7 @@ class AppConstants {
       specialty: "Cuidados Paliativos",
       rating: 4.8,
       reviewsCount: 48,
-      consultationFee: 180, // Precio en soles
+      consultationFee: 150, // Precio en soles
       profileImage: "assets/images/doctor_female_4.png",
     ),
     DoctorModel(
@@ -329,7 +334,7 @@ class AppConstants {
       specialty: "Nutricionista Oncológico",
       rating: 4.7,
       reviewsCount: 34,
-      consultationFee: 140, // Precio en soles
+      consultationFee: 75, // Precio en soles
       profileImage: "assets/images/doctor_male_4.png",
     ),
     DoctorModel(
@@ -338,7 +343,7 @@ class AppConstants {
       specialty: "Psico-Oncóloga",
       rating: 4.8,
       reviewsCount: 40,
-      consultationFee: 150, // Precio en soles
+      consultationFee: 100, // Precio en soles
       profileImage: "assets/images/doctor_female_5.png",
     ),
     DoctorModel(
@@ -347,7 +352,7 @@ class AppConstants {
       specialty: "Oncología Médica",
       rating: 4.5,
       reviewsCount: 29,
-      consultationFee: 200, // Precio en soles
+      consultationFee: 150, // Precio en soles
       profileImage: "assets/images/doctor_male_5.png",
     ),
     DoctorModel(
@@ -356,7 +361,7 @@ class AppConstants {
       specialty: "Telemedicina Oncológica",
       rating: 4.7,
       reviewsCount: 51,
-      consultationFee: 120, // Precio en soles
+      consultationFee: 150, // Precio en soles
       profileImage: "assets/images/doctor_female_6.png",
     ),
     DoctorModel(
@@ -365,7 +370,7 @@ class AppConstants {
       specialty: "Radioterapeuta Oncológico",
       rating: 4.7,
       reviewsCount: 33,
-      consultationFee: 250, // Precio en soles
+      consultationFee: 150, // Precio en soles
       profileImage: "assets/images/doctor_male_6.png",
     ),
     DoctorModel(
@@ -374,7 +379,7 @@ class AppConstants {
       specialty: "Nutrición Integrativa",
       rating: 4.9,
       reviewsCount: 61,
-      consultationFee: 160, // Precio en soles
+      consultationFee: 75, // Precio en soles
       profileImage: "assets/images/doctor_female_7.png",
     ),
     /* DoctorModel(
@@ -392,7 +397,7 @@ class AppConstants {
       specialty: "Oncología Ginecológica",
       rating: 4.8,
       reviewsCount: 27,
-      consultationFee: 220, // Precio en soles
+      consultationFee: 150, // Precio en soles
       profileImage: "assets/images/doctor_female_8.png",
     ),
     DoctorModel(
@@ -401,7 +406,7 @@ class AppConstants {
       specialty: "Oncología Torácica",
       rating: 4.8,
       reviewsCount: 32,
-      consultationFee: 200, // Precio en soles
+      consultationFee: 150, // Precio en soles
       profileImage: "assets/images/doctor_male_8.png",
     ),
     /* DoctorModel(
@@ -419,7 +424,7 @@ class AppConstants {
       specialty: "Nutrición y Fitness Oncológico",
       rating: 4.7,
       reviewsCount: 36,
-      consultationFee: 130, // Precio en soles
+      consultationFee: 75, // Precio en soles
       profileImage: "assets/images/doctor_male_9.png",
     ),
     DoctorModel(
@@ -428,7 +433,7 @@ class AppConstants {
       specialty: "Oncología de Precisión",
       rating: 4.9,
       reviewsCount: 41,
-      consultationFee: 250, // Precio en soles
+      consultationFee: 150, // Precio en soles
       profileImage: "assets/images/doctor_female_10.png",
     ),
     DoctorModel(
@@ -437,7 +442,7 @@ class AppConstants {
       specialty: "Oncología Digestiva",
       rating: 4.6,
       reviewsCount: 24,
-      consultationFee: 220, // Precio en soles
+      consultationFee: 150, // Precio en soles
       profileImage: "assets/images/doctor_male_10.png",
     ),
     DoctorModel(
@@ -446,7 +451,7 @@ class AppConstants {
       specialty: "Aptitud Física Oncológica",
       rating: 4.7,
       reviewsCount: 40,
-      consultationFee: 130, // Precio en soles
+      consultationFee: 75, // Precio en soles
       profileImage: "assets/images/doctor_male_1.png",
     ),
     DoctorModel(
@@ -455,7 +460,7 @@ class AppConstants {
       specialty: "Aptitud Física Oncológica",
       rating: 4.8,
       reviewsCount: 35,
-      consultationFee: 140, // Precio en soles
+      consultationFee: 75, // Precio en soles
       profileImage: "assets/images/doctor_female_9.png",
     ),
     DoctorModel(
@@ -464,7 +469,7 @@ class AppConstants {
       specialty: "Aptitud Física Oncológica",
       rating: 4.6,
       reviewsCount: 28,
-      consultationFee: 120, // Precio en soles
+      consultationFee: 75, // Precio en soles
       profileImage: "assets/images/doctor_male_7.png",
     ),
     DoctorModel(
@@ -473,43 +478,10 @@ class AppConstants {
       specialty: "Aptitud Física Oncológica",
       rating: 4.9,
       reviewsCount: 50,
-      consultationFee: 150, // Precio en soles
+      consultationFee: 75, // Precio en soles
       profileImage: "assets/images/doctor_female_4.png",
     ),
   ];
-
-  /* static final List<PlanModel> samplePlans = [
-    PlanModel(
-      title: "Paquete Integral",
-      price: 175.0,
-      discount: 0.23, // 23%
-      description: "Acceso a todos los paquetes: Medicamentos, Telemedicina, Apoyo Psicológico y Nutrición/Aptitud Física.",
-      benefits: ["Consultas de telemedicina ilimitadas", "Medicamentos con descuentos", "Apoyo psicológico 24/7", "Nutrición y aptitud física"],
-    ),
-    PlanModel(
-      title: "Paquete Telemedicina",
-      price: 70.0,
-      description: "Consultas de telemedicina con especialistas oncológicos.",
-      discount: 0.10, // 10%
-      benefits: ["Consultas médicas virtuales", "Soporte oncológico prioritario"],
-    ),
-    PlanModel(
-      title: "Paquete Apoyo Psicológico",
-      price: 50.0,
-      discount: 0.23,
-      description: "Acceso a consultas de apoyo psicológico y espiritual",
-      benefits: ["Sesiones de psicología oncológica", "Terapia grupal virtual"],
-    ),
-    PlanModel(
-      title: "Paquete Nutrición",
-      price: 50.0,
-      discount: 0.23,
-      description: "Acceso a consultas de nutrición",
-      benefits: [
-        "Planes de alimentación oncológica",
-      ],
-    )
-  ]; */
 
   static final List<PlanData> plans = [
     PlanData(
@@ -526,23 +498,8 @@ class AppConstants {
       color: const Color.fromARGB(255, 124, 124, 124),
     ),
     PlanData(
-      title: "Paquete Integral",
-      price: 175.0,
-      physicianPrice: 0.0,
-      discount: 0.23,
-      description: "Acceso a todos los paquetes: Medicamentos, Telemedicina, Apoyo Psicológico y Nutrición/Aptitud Física.",
-      benefits: [
-        "Consultas de telemedicina ilimitadas",
-        "Medicamentos con descuentos",
-        "Apoyo psicológico 24/7",
-        "Nutrición y aptitud física",
-      ],
-      icon: Icons.health_and_safety,
-      color: Colors.pink,
-    ),
-    PlanData(
       title: "Paquete Telemedicina",
-      price: 70.0,
+      price: 150.0,
       physicianPrice: 70.0,
       discount: 0.10,
       description: "Consultas virtuales con especialistas oncológicos.",
@@ -555,7 +512,7 @@ class AppConstants {
     ),
     PlanData(
       title: "Paquete Apoyo Psicológico",
-      price: 50.0,
+      price: 100.0,
       physicianPrice: 50.0,
       discount: 0.23,
       description: "Acceso a consultas de apoyo psicológico y espiritual.",
@@ -568,7 +525,7 @@ class AppConstants {
     ),
     PlanData(
       title: "Paquete Nutrición",
-      price: 50.0,
+      price: 75.0,
       physicianPrice: 50.0,
       discount: 0.23,
       description: "Acceso a consultas de nutrición.",
@@ -580,7 +537,7 @@ class AppConstants {
     ),
     PlanData(
       title: "Paquete Aptitud Física",
-      price: 50.0,
+      price: 75.0,
       physicianPrice: 50.0,
       discount: 0.23,
       description: "Acceso a programas de aptitud física.",
@@ -589,6 +546,22 @@ class AppConstants {
       ],
       icon: Icons.fitness_center,
       color: Colors.green,
+    ),
+    PlanData(
+      title: "Paquete Integral",
+      price: 200.0,
+      physicianPrice: 0.0,
+      discount: 0.23,
+      description: "Acceso a todos los paquetes: Medicamentos, Telemedicina, Apoyo Psicológico y Nutrición/Aptitud Física.",
+      benefits: [
+        "Descuento en medicamentos (alianzas estratégicas)",
+        "Una consulta y una re consulta en telemedicina",
+        "Una consulta y una re consulta en apoyo psicológico y acceso ilimitado a grupos de apoyo",
+        "Una consulta y una re consulta en nutrición y acceso ilimitado a recetas personalizadas",
+        "Una consulta y una re consulta en aptitud física y acceso ilimitado a rutinas personalizadas"
+      ],
+      icon: Icons.health_and_safety,
+      color: Colors.pink,
     ),
   ];
 }

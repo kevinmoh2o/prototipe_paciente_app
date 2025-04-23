@@ -7,10 +7,11 @@ class CategoriesGrid extends StatelessWidget {
   final String selectedPlan;
 
   final VoidCallback onTapMedicamentos;
-  final VoidCallback onTapPsicologiaEspiritual;
-  final VoidCallback onTapNutricion;
-  final VoidCallback onTapAptitud;
-  final VoidCallback onTapTelemedicina;
+  final void Function(bool needsUpgrade) onTapPsicologiaEspiritual;
+  //final VoidCallback onTapPsicologiaEspiritual;
+  final void Function(bool needsUpgrade) onTapNutricion;
+  final void Function(bool needsUpgrade) onTapAptitud;
+  final void Function(bool needsUpgrade) onTapTelemedicina;
 
   const CategoriesGrid({
     Key? key,
@@ -64,19 +65,38 @@ class CategoriesGrid extends StatelessWidget {
         final cat = categories[index];
         final needsUpgrade = !included.contains(cat.title);
 
-        final VoidCallback callback = switch (cat.title) {
+        /* final VoidCallback callback = switch (cat.title) {
           'Medicamentos' => onTapMedicamentos,
           'Apoyo Psicológico Espiritual' => onTapPsicologiaEspiritual,
           'Nutrición' => onTapNutricion,
           'Aptitud Física' => onTapAptitud,
           'Telemedicina' => onTapTelemedicina,
           _ => () {},
-        };
+        }; */
 
         return Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: callback,
+            //onTap: callback,
+            onTap: () {
+              switch (cat.title) {
+                case 'Medicamentos':
+                  onTapMedicamentos();
+                  break;
+                case 'Apoyo Psicológico Espiritual':
+                  onTapPsicologiaEspiritual(needsUpgrade);
+                  break;
+                case 'Nutrición':
+                  onTapNutricion(needsUpgrade);
+                  break;
+                case 'Aptitud Física':
+                  onTapAptitud(needsUpgrade);
+                  break;
+                case 'Telemedicina':
+                  onTapTelemedicina(needsUpgrade);
+                  break;
+              }
+            },
             borderRadius: BorderRadius.circular(20),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),

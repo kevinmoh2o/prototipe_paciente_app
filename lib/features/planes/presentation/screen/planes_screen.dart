@@ -1,12 +1,15 @@
+// lib/features/planes/presentation/screen/planes_screen.dart
 import 'package:flutter/material.dart';
-import 'package:paciente_app/core/ui/alert_modal.dart';
 import 'package:provider/provider.dart';
+
 import 'package:paciente_app/core/constants/app_constants.dart';
 import 'package:paciente_app/core/data/models/plan_data_model.dart';
+import 'package:paciente_app/core/ui/alert_modal.dart';
 import 'package:paciente_app/features/create_account/presentation/provider/patient_provider.dart';
 
 class PlanesScreen extends StatefulWidget {
-  const PlanesScreen({Key? key}) : super(key: key);
+  final int initialIndex;
+  const PlanesScreen({Key? key, this.initialIndex = 0}) : super(key: key);
 
   @override
   State<PlanesScreen> createState() => _PlanesScreenState();
@@ -15,28 +18,24 @@ class PlanesScreen extends StatefulWidget {
 class _PlanesScreenState extends State<PlanesScreen> {
   bool _loading = true;
   late PageController _pageController;
-  int _currentPage = 0;
+  late int _currentPage;
 
   @override
   void initState() {
     super.initState();
-    _loadPatientData();
+    _currentPage = widget.initialIndex;
     _pageController = PageController(
-      viewportFraction: 0.82, // Cada tarjeta ocupa ~82% del ancho
-    );
-
-    // Escuchamos cambios de página para actualizar _currentPage
-    _pageController.addListener(() {
-      final newPage = _pageController.page?.round() ?? 0;
-      if (newPage != _currentPage) {
-        setState(() => _currentPage = newPage);
-      }
-    });
+      initialPage: widget.initialIndex,
+      viewportFraction: .82,
+    )..addListener(() {
+        final p = _pageController.page?.round() ?? 0;
+        if (p != _currentPage) setState(() => _currentPage = p);
+      });
+    _loadPatientData();
   }
 
   Future<void> _loadPatientData() async {
-    final patientProv = context.read<PatientProvider>();
-    await patientProv.loadPatient(); // Carga plan actual, etc.
+    await context.read<PatientProvider>().loadPatient();
     setState(() => _loading = false);
   }
 
@@ -49,27 +48,22 @@ class _PlanesScreenState extends State<PlanesScreen> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     final patientProv = context.watch<PatientProvider>();
     final activePlan = patientProv.patient.activePlan;
-    final plans = AppConstants.plans; // Tus planes
+    final plans = AppConstants.plans;
 
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          // Scroll vertical para todo el contenido de la pantalla
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Banner: Plan actual
               if (activePlan != null)
                 Container(
-                  width: double.infinity,
                   margin: const EdgeInsets.only(bottom: 16),
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
@@ -81,83 +75,52 @@ class _PlanesScreenState extends State<PlanesScreen> {
                       const Icon(Icons.check_circle, color: Colors.green),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: Text(
-                          "Tu plan actual: $activePlan",
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
+                        child: Text("Tu plan actual: $activePlan", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                       ),
-                      TextButton(
-                        onPressed: () {
-                          // Lógica para cambiar plan, etc.
-                        },
-                        child: const Text("Cambiar"),
-                      ),
+                      TextButton(onPressed: () {}, child: const Text("Cambiar")),
                     ],
                   ),
                 ),
-
-              // Título y subtítulo
-              const Text(
-                "Nuestros Planes",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
+              const Text("Nuestros Planes", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               const Text(
                 "Desliza horizontalmente para ver todos los planes y elige el que mejor se ajuste a tus necesidades.",
                 style: TextStyle(fontSize: 14, color: Colors.black54),
               ),
               const SizedBox(height: 16),
-
-              // Puntos (indicador) arriba del carrusel
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(plans.length, (index) {
+                children: List.generate(plans.length, (i) {
+                  final sel = i == _currentPage;
                   return GestureDetector(
-                    onTap: () {
-                      // Al pulsar un punto, animamos el PageView a esa página
-                      _pageController.animateToPage(
-                        index,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                    },
-                    child: Container(
+                    onTap: () => _pageController.animateToPage(i, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 250),
                       margin: const EdgeInsets.symmetric(horizontal: 4),
-                      width: 10,
+                      width: sel ? 14 : 10,
                       height: 10,
                       decoration: BoxDecoration(
+                        color: sel ? Colors.blue : Colors.grey.shade400,
                         shape: BoxShape.circle,
-                        color: (index == _currentPage) ? Colors.blue : Colors.grey.shade400,
                       ),
                     ),
                   );
                 }),
               ),
               const SizedBox(height: 16),
-
-              // Carrusel de planes con altura fija
               SizedBox(
-                height: 400, // Ajusta la altura del carrusel a tu gusto
+                height: 400,
                 child: PageView.builder(
                   controller: _pageController,
                   itemCount: plans.length,
-                  itemBuilder: (ctx, index) {
-                    final plan = plans[index];
-                    final bool isSelected = (plan.title == activePlan);
-
-                    return Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 8),
+                  itemBuilder: (_, i) {
+                    final p = plans[i];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
                       child: _buildPlanCard(
-                        context,
-                        plan,
-                        isSelected: isSelected,
-                        onChoose: () {
-                          _onChoosePlan(context, plan.title, plan.price);
-                        },
+                        p,
+                        isSelected: p.title == activePlan,
+                        onChoose: () => _onChoosePlan(context, p.title, p.price),
                       ),
                     );
                   },
@@ -170,32 +133,17 @@ class _PlanesScreenState extends State<PlanesScreen> {
     );
   }
 
-  // Construye la tarjeta de cada plan
-  Widget _buildPlanCard(
-    BuildContext context,
-    PlanData plan, {
-    required bool isSelected,
-    required VoidCallback onChoose,
-  }) {
-    final discountText = (plan.discount != null) ? "Ahorre ${(plan.discount! * 100).toStringAsFixed(0)}%" : null;
-
-    // Colores base según selección y datos del plan
-    final bgColor = isSelected ? plan.color : Colors.white;
-    final textColor = isSelected ? Colors.white : Colors.black87;
-    // Si está seleccionado, aclaramos el color para iconos/checks
-    final accentColor = isSelected ? plan.color.withOpacity(0.7) : plan.color;
+  Widget _buildPlanCard(PlanData plan, {required bool isSelected, required VoidCallback onChoose}) {
+    final discount = plan.discount != null ? "Ahorre ${(plan.discount! * 100).toStringAsFixed(0)}%" : null;
+    final bg = isSelected ? plan.color : Colors.white;
+    final txt = isSelected ? Colors.white : Colors.black87;
+    final accent = isSelected ? plan.color.withOpacity(.7) : plan.color;
 
     return Container(
       decoration: BoxDecoration(
-        color: bgColor,
+        color: bg,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(.05), blurRadius: 4, offset: const Offset(0, 2))],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
@@ -204,157 +152,78 @@ class _PlanesScreenState extends State<PlanesScreen> {
             SingleChildScrollView(
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Icono del plan
-                  Icon(
-                    plan.icon,
-                    size: 40,
-                    color: isSelected ? Colors.white : plan.color,
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Título
-                  Text(
-                    plan.title,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Precio
+                  Icon(plan.icon, size: 30, color: isSelected ? Colors.white : plan.color),
+                  const SizedBox(height: 10),
+                  Text(plan.title, textAlign: TextAlign.center, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: txt)),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(
-                        "S/${plan.price.toStringAsFixed(2)}",
-                        style: TextStyle(
-                          fontSize: 50,
-                          fontWeight: FontWeight.bold,
-                          color: isSelected ? Colors.white : plan.color,
-                        ),
-                      ),
+                      Text("S/${plan.price.toStringAsFixed(2)}",
+                          style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold, color: isSelected ? Colors.white : plan.color)),
                       const SizedBox(width: 4),
-                      Text(
-                        "por mes",
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: isSelected ? Colors.white70 : plan.color.withOpacity(0.8),
-                        ),
-                      ),
+                      Text("por mes",
+                          style:
+                              TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: isSelected ? Colors.white70 : plan.color.withOpacity(.8))),
                     ],
                   ),
-                  const SizedBox(height: 24),
-
-                  // Descripción
-                  Text(
-                    plan.description,
-                    textAlign: TextAlign.justify,
-                    style: TextStyle(fontSize: 14, color: textColor),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Beneficios
-                  Column(
-                    children: plan.benefits.map((b) {
-                      return Padding(
+                  const SizedBox(height: 10),
+                  Text(plan.description, textAlign: TextAlign.justify, style: TextStyle(fontSize: 14, color: txt)),
+                  const SizedBox(height: 10),
+                  ...plan.benefits.map((b) => Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.check, color: isSelected ? Colors.white : plan.color, size: 18),
-                            const SizedBox(width: 6),
-                            Expanded(
-                              child: Text(
-                                b,
-                                style: TextStyle(fontSize: 14, color: textColor),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
+                        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                          Icon(Icons.check, color: isSelected ? Colors.white : plan.color, size: 18),
+                          const SizedBox(width: 6),
+                          Expanded(child: Text(b, style: TextStyle(fontSize: 14, color: txt))),
+                        ]),
+                      )),
                   const SizedBox(height: 16),
-
-                  // Botón de descuento (si existe)
-                  if (discountText != null)
+                  if (discount != null) ...[
                     ElevatedButton(
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: isSelected ? Colors.white.withOpacity(0.1) : plan.color.withOpacity(0.9),
-                        foregroundColor: isSelected ? Colors.white : Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 10,
-                        ),
+                        backgroundColor: isSelected ? Colors.white.withOpacity(.1) : plan.color.withOpacity(.9),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       ),
-                      child: Text(discountText),
+                      child: Text(discount),
                     ),
-                  if (discountText != null) const SizedBox(height: 12),
-
-                  // Botón Escoger Plan
+                    const SizedBox(height: 12),
+                  ],
                   SizedBox(
                     width: 180,
                     height: 45,
                     child: ElevatedButton(
                       onPressed: onChoose,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: isSelected ? Colors.white.withOpacity(0.85) : plan.color,
+                        backgroundColor: isSelected ? Colors.white.withOpacity(.85) : plan.color,
                         foregroundColor: isSelected ? plan.color : Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       ),
-                      child: Text(
-                        isSelected ? "Seleccionado" : "Escoger Plan",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                      child: Text(isSelected ? "Seleccionado" : "Escoger Plan", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                     ),
                   ),
                 ],
               ),
             ),
-
-            // Ribbon para el plan actual
             if (isSelected)
               Positioned(
                 top: 0,
                 right: 0,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: accentColor,
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(8),
-                      topRight: Radius.circular(12),
-                    ),
+                    color: accent,
+                    borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(8), topRight: Radius.circular(12)),
                   ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.check, color: Colors.white, size: 20),
-                      const SizedBox(width: 4),
-                      const Text(
-                        "Plan Actual",
-                        style: TextStyle(color: Colors.white, fontSize: 15),
-                      ),
-                    ],
-                  ),
+                  child: Row(children: const [
+                    Icon(Icons.check, color: Colors.white, size: 20),
+                    SizedBox(width: 4),
+                    Text("Plan Actual", style: TextStyle(color: Colors.white, fontSize: 15)),
+                  ]),
                 ),
               ),
           ],
@@ -363,54 +232,32 @@ class _PlanesScreenState extends State<PlanesScreen> {
     );
   }
 
-  // Igual a tu lógica anterior
-  void _onChoosePlan(BuildContext context, String planTitle, double price) {
-    final patientProv = context.read<PatientProvider>();
-    final activePlan = patientProv.patient.activePlan;
+  void _onChoosePlan(BuildContext ctx, String planTitle, double price) {
+    final patientProv = ctx.read<PatientProvider>();
+    final currentPlan = patientProv.patient.activePlan;
+    final change = currentPlan != null && currentPlan != planTitle;
 
-    if (activePlan != null && activePlan == planTitle) {
-      AlertModal.showAlert(
-        context,
-        color: Colors.green,
-        title: 'Ya tienes el plan : ',
-        description: planTitle,
-        detail: 'Detalle opcional',
-        forceDialog: false,
-        snackbarDurationInSeconds: 5,
-      );
+    if (currentPlan == planTitle) {
+      AlertModal.showAlert(ctx,
+          color: Colors.green, title: 'Ya tienes el plan:', description: planTitle, detail: '', forceDialog: false, snackbarDurationInSeconds: 5);
       return;
     }
 
-    final isChanging = (activePlan != null && activePlan != planTitle);
-
     showDialog(
-      context: context,
+      context: ctx,
       builder: (_) => AlertDialog(
-        title: Text(isChanging ? "Cambiar Plan" : "Escoger Plan"),
-        content: isChanging
-            ? Text(
-                "Actualmente tienes el plan $activePlan.\n"
-                "¿Deseas cambiarte al plan $planTitle (S/$price al mes)?",
-              )
-            : Text(
-                "¿Deseas suscribirte al plan $planTitle con un costo de S/$price al mes?",
-              ),
+        title: Text(change ? "Cambiar Plan" : "Escoger Plan"),
+        content: Text(change
+            ? "Actualmente tienes el plan $currentPlan.\n¿Deseas cambiarte al plan $planTitle (S/$price al mes)?"
+            : "¿Deseas suscribirte al plan $planTitle con un costo de S/$price al mes?"),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cancelar"),
-          ),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text("Cancelar")),
           ElevatedButton(
             onPressed: () {
               patientProv.setActivePlan(planTitle);
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    isChanging ? "¡Has cambiado tu plan a $planTitle!" : "¡Te suscribiste al plan $planTitle!",
-                  ),
-                ),
-              );
+              Navigator.pop(ctx);
+              ScaffoldMessenger.of(ctx)
+                  .showSnackBar(SnackBar(content: Text(change ? "¡Has cambiado tu plan a $planTitle!" : "¡Te suscribiste al plan $planTitle!")));
             },
             child: const Text("Confirmar"),
           ),

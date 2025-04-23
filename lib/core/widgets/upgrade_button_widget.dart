@@ -15,7 +15,7 @@ class UpgradeButton extends StatelessWidget {
         color: Colors.white,
       ),
       label: const Text(
-        'Upgrade plan',
+        'Mejorar plan',
         style: TextStyle(
           color: Colors.white,
         ),

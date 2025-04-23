@@ -62,15 +62,22 @@ class CalendarProvider extends ChangeNotifier {
 
   List<DoctorModel> get filteredDoctors {
     if (_selectedCategory == null) return [];
+
     switch (_selectedCategory!) {
       case AppointmentCategory.psicologico:
         return _allDoctors.where((d) => d.specialty.toLowerCase().contains('psico')).toList();
+
       case AppointmentCategory.nutricion:
-        return _allDoctors.where((d) => d.specialty.toLowerCase().contains('nutric')).toList();
-      case AppointmentCategory.telemedicina:
-        return _allDoctors.where((d) => d.specialty.toLowerCase().contains('oncol')).toList();
+        return _allDoctors.where((d) => d.specialty.toLowerCase().contains('utri')).toList();
+
       case AppointmentCategory.aptitudFisica:
         return _allDoctors.where((d) => d.specialty.toLowerCase().contains('ptitud')).toList();
+
+      case AppointmentCategory.telemedicina:
+        return _allDoctors.where((d) {
+          final s = d.specialty.toLowerCase();
+          return !s.contains('psico') && !s.contains('utri') && !s.contains('ptitud');
+        }).toList();
     }
   }
 

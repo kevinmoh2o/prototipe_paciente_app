@@ -10,6 +10,26 @@ class PatientProvider extends ChangeNotifier {
 
   PatientModel? get currentPatient => _currentPatient;
   PatientModel get patient => _patient;
+  int _counterIntegral = 0;
+
+  int get counterIntegral => _counterIntegral;
+
+  set counterIntegral(int counterIntegral) {
+    _counterIntegral = counterIntegral;
+    notifyListeners();
+  }
+
+  void add() {
+    _patient.counterPAqueteIntegral = _patient.counterPAqueteIntegral! + 1;
+    savePatient();
+    notifyListeners();
+  }
+
+  void subtract() {
+    _patient.counterPAqueteIntegral = _patient.counterPAqueteIntegral! - 1;
+    savePatient();
+    notifyListeners();
+  }
 
   /// Carga desde Shared Preferences si existe.
   Future<void> loadPatient() async {
@@ -47,6 +67,12 @@ class PatientProvider extends ChangeNotifier {
 
   void setActivePlan(String planName) async {
     await loadPatient();
+    if (planName == 'Paquete Integral') {
+      _patient.counterPAqueteIntegral = 2;
+    } else {
+      _patient.counterPAqueteIntegral = 0;
+    }
+    //print(planName);
     //print(_patient.toString());
     _patient.activePlan = planName;
     notifyListeners();

@@ -260,6 +260,46 @@ class LoginScreen extends StatelessWidget {
                             ),
                           ),
                         ),
+                        /* SizedBox(
+                          width: 120,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text('TEST'),
+                              const SizedBox(width: 8),
+                              IconButton(
+                                icon: const Icon(Icons.delete, color: Colors.red),
+                                onPressed: () async {
+                                  final PatientLocalService _patientService = PatientLocalService();
+
+                                  final patientData = PatientModel(
+                                      nombre: "Erik",
+                                      apellidoPaterno: "Balbin",
+                                      apellidoMaterno: "Cartman",
+                                      genero: "Masculino",
+                                      //fechaNacimiento: ,
+                                      telefono: "897654321",
+                                      correo: "k@gmail.com",
+                                      password: "12345678",
+                                      diagnostico: "a",
+                                      grado: "",
+                                      restriccionesAlimentacion: "",
+                                      otrasEnfermedades: "",
+                                      talla: null,
+                                      peso: null,
+                                      tipoSeguro: "EPS",
+                                      centroTratamiento: "Clínica Anglo Americana",
+                                      //nombreFamiliar: "",
+                                      //relacionFamiliar: "",
+                                      //numeroEmergencia: "",
+                                      aceptoTerminos: true,
+                                      activePlan: "Plan Básico");
+                                  await _patientService.savePatient(patientData);
+                                },
+                              )
+                            ],
+                          ),
+                        ) */
                       ],
                     ),
                   ),
