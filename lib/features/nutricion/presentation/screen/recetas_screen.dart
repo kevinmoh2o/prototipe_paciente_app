@@ -28,6 +28,7 @@ class RecetasScreen extends StatelessWidget {
       iconColor: Colors.green,
       allRecommendations: miListaDeRutinas,
       patient: paciente, // para filtrar por diagnóstico
+      categoryTitle: "Nutrición",
     );
 
     /* return Scaffold(

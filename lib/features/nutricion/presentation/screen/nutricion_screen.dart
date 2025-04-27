@@ -53,63 +53,12 @@ class NutricionScreen extends StatelessWidget {
                   subtitle: "Habla con expertos en nutrición en vivo",
                   icon: Icons.medical_services,
                   color: Colors.orange,
-                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MainNavigationScreen(currentIndex: 1))),
+                  onTap: () =>
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const MainNavigationScreen(initialTab: NavigationTab.calendar))),
                 ),
               ],
             ),
           ),
-
-          // capa de bloqueo + tarjeta interactiva
-          if (isLocked) ...[
-            ModalBarrier(
-              color: Colors.black.withOpacity(0.55),
-              dismissible: false,
-            ),
-            Center(
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 32),
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 12, offset: Offset(0, 6))],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.lock_outline, size: 56, color: Colors.green),
-                    const SizedBox(height: 16),
-                    const Text("Contenido exclusivo", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    const Text(
-                      "Actualiza tu plan para disfrutar de todas las funcionalidades.",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 14),
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton.icon(
-                      icon: const Icon(Icons.upgrade_rounded),
-                      label: const Text("Mejorar plan"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-                      ),
-                      onPressed: onUpgrade ??
-                          () => Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => const MainNavigationScreen(
-                                          currentIndex: 2,
-                                          planesInitialIndex: 3,
-                                        )),
-                              ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
         ],
       ),
     );

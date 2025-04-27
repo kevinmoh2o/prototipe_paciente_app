@@ -58,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 userAvatar: homeProv.userAvatar,
               ),
               const SizedBox(height: 8),
-              if (activePlan != 'Paquete Integral')
+              /* if (activePlan != 'Paquete Integral')
                 UpgradeButton(
                   color: planObj.color,
                   onPressed: () => Navigator.pushReplacement(
@@ -67,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (_) => const MainNavigationScreen(currentIndex: 2),
                     ),
                   ),
-                ),
+                ), */
               const SizedBox(height: 16),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
@@ -80,13 +80,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   selectedPlan: activePlan ?? '',
                   categories: allowedCategories,
                   onTapMedicamentos: () => _navigateTo(context, const MedicationScreen()),
-                  onTapPsicologiaEspiritual: (needsUpgrade) => _navigateTo(context, PsicologiaScreen(isLocked: needsUpgrade)),
+                  onTapPsicologiaEspiritual: (needsUpgrade) => _navigateTo(
+                      context,
+                      PsicologiaScreen(
+                        isLocked: needsUpgrade,
+                        category: "Apoyo Psicológico Espiritual",
+                      )),
                   onTapNutricion: (needsUpgrade) => _navigateTo(context, NutricionScreen(isLocked: needsUpgrade)),
                   onTapAptitud: (needsUpgrade) => _navigateTo(context, AptitudScreen(isLocked: needsUpgrade)),
                   onTapTelemedicina: (needsUpgrade) => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => const MainNavigationScreen(currentIndex: 1),
+                      builder: (_) => const MainNavigationScreen(initialTab: NavigationTab.calendar),
                     ),
                   ),
                 ),
@@ -98,6 +103,36 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+  /* 
+  static final List<CategoryModel> homeCategories = [
+    CategoryModel(
+      title: "Medicamentos",
+      iconPath: "assets/icons/pills.png",
+      description: "Control y prescripción",
+    ),
+    CategoryModel(
+      title: "Apoyo Psicológico Espiritual",
+      iconPath: "assets/icons/psychology.png",
+      description: "Soporte emocional y espiritual",
+    ),
+    CategoryModel(
+      title: "Nutrición",
+      iconPath: "assets/icons/nutrition.png",
+      description: "Plan alimenticio y asesoría",
+    ),
+    CategoryModel(
+      title: "Aptitud Física",
+      iconPath: "assets/icons/estirado.png",
+      description: "Ejercicio y rutinas adaptadas",
+    ),
+    CategoryModel(
+      title: "Telemedicina",
+      iconPath: "assets/icons/telemedicine.png",
+      description: "Videoconsultas seguras y seguimiento remoto",
+    ),
+  ];
+   */
 
   void _navigateTo(BuildContext context, Widget screen) {
     Navigator.push(context, MaterialPageRoute(builder: (_) => screen));

@@ -26,39 +26,7 @@ class ApoyoEspiritualScreen extends StatelessWidget {
       iconColor: Colors.green,
       allRecommendations: miListaDeRutinas,
       patient: paciente, // para filtrar por diagnóstico
+      categoryTitle: "Apoyo Psicológico Espiritual",
     );
-
-    /* return Scaffold(
-      appBar: AppBar(
-        title: const Text("Apoyo Espiritual"),
-        backgroundColor: Colors.teal,
-      ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: recursos.length,
-        itemBuilder: (ctx, i) {
-          final res = recursos[i];
-          return Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                )
-              ],
-            ),
-            child: Text(
-              res,
-              style: const TextStyle(fontSize: 14, color: Colors.black87),
-            ),
-          );
-        },
-      ),
-    ); */
   }
 }

@@ -9,14 +9,57 @@ import 'package:paciente_app/features/profile/presentation/screens/profile_scree
 import 'package:paciente_app/features/cart/presentation/screen/cart_screen.dart';
 import 'package:paciente_app/features/cart/presentation/provider/cart_provider.dart';
 
+/// Representa las pestañas visibles en el `BottomNavigationBar`.
+enum NavigationTab {
+  home,
+  calendar,
+//planes,
+  profile,
+  cart
+}
+
+/// Icono y etiqueta asociados a cada tab.
+/// Usar extensiones evita `switch` repetitivos y mantiene el código limpio.
+extension NavigationTabUI on NavigationTab {
+  String get label {
+    switch (this) {
+      case NavigationTab.home:
+        return 'Inicio';
+      case NavigationTab.calendar:
+        return 'Calendario';
+      /* case NavigationTab.planes:
+        return 'Planes'; */
+      case NavigationTab.profile:
+        return 'Perfil';
+      case NavigationTab.cart:
+        return 'Carrito';
+    }
+  }
+
+  IconData get icon {
+    switch (this) {
+      case NavigationTab.home:
+        return Icons.home;
+      case NavigationTab.calendar:
+        return Icons.calendar_month;
+      /* case NavigationTab.planes:
+        return Icons.assessment; */
+      case NavigationTab.profile:
+        return Icons.person;
+      case NavigationTab.cart:
+        return Icons.shopping_cart;
+    }
+  }
+}
+
 class MainNavigationScreen extends StatefulWidget {
-  final int currentIndex;
-  final int planesInitialIndex; // 🆕 índice inicial para PlanesScreen
+  final NavigationTab initialTab;
+  final int planesInitialIndex; // índice inicial para PlanesScreen
 
   const MainNavigationScreen({
     Key? key,
-    required this.currentIndex,
-    this.planesInitialIndex = 0, // por defecto 0
+    this.initialTab = NavigationTab.home,
+    this.planesInitialIndex = 0,
   }) : super(key: key);
 
   @override
@@ -24,21 +67,29 @@ class MainNavigationScreen extends StatefulWidget {
 }
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
-  late int _currentIndex;
+  late NavigationTab _currentTab;
 
   @override
   void initState() {
     super.initState();
-    _currentIndex = widget.currentIndex;
+    _currentTab = widget.initialTab;
   }
 
-  late final List<Widget> _screens = [
-    const HomeScreen(), // 0
-    const CalendarScreen(isarrowBackActive: false), // 1
-    PlanesScreen(initialIndex: widget.planesInitialIndex), // 2  🆕
-    const ProfileScreen(), // 3
-    const CartScreen(), // 4
-  ];
+  /// Devuelve el widget correspondiente a la tab seleccionada.
+  Widget _screenForTab(NavigationTab tab) {
+    switch (tab) {
+      case NavigationTab.home:
+        return const HomeScreen();
+      case NavigationTab.calendar:
+        return const CalendarScreen(isarrowBackActive: false);
+      /* case NavigationTab.planes:
+        return PlanesScreen(initialIndex: widget.planesInitialIndex); */
+      case NavigationTab.profile:
+        return const ProfileScreen();
+      case NavigationTab.cart:
+        return const CartScreen();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,39 +99,44 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     return PopScope(
       canPop: false,
       child: Scaffold(
-        body: _screens[_currentIndex],
+        body: _screenForTab(_currentTab),
         bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _currentIndex,
+          currentIndex: _currentTab.index,
           selectedItemColor: const Color(0xFF5B6BF5),
           unselectedItemColor: Colors.grey,
-          onTap: (i) => setState(() => _currentIndex = i),
-          items: [
-            const BottomNavigationBarItem(icon: Icon(Icons.home), label: "Inicio"),
-            const BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: "Calendario"),
-            const BottomNavigationBarItem(icon: Icon(Icons.assessment), label: "Planes"),
-            const BottomNavigationBarItem(icon: Icon(Icons.person), label: "Perfil"),
-            BottomNavigationBarItem(
-              icon: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  const Icon(Icons.shopping_cart),
-                  if (cartCount > 0)
-                    Positioned(
-                      right: -2,
-                      top: -6,
-                      child: _PulsingBadge(count: cartCount),
-                    ),
-                ],
-              ),
-              label: "Carrito",
-            ),
-          ],
+          onTap: (i) => setState(() => _currentTab = NavigationTab.values[i]),
+          items: NavigationTab.values.map((tab) {
+            // El item del carrito necesita mostrar un badge dinámico.
+            if (tab == NavigationTab.cart) {
+              return BottomNavigationBarItem(
+                label: tab.label,
+                icon: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Icon(tab.icon),
+                    if (cartCount > 0)
+                      Positioned(
+                        right: -2,
+                        top: -6,
+                        child: _PulsingBadge(count: cartCount),
+                      ),
+                  ],
+                ),
+              );
+            }
+
+            return BottomNavigationBarItem(
+              icon: Icon(tab.icon),
+              label: tab.label,
+            );
+          }).toList(),
         ),
       ),
     );
   }
 }
 
+/// ------------- Badge animado para el carrito -------------
 class _PulsingBadge extends StatefulWidget {
   final int count;
 
@@ -91,8 +147,8 @@ class _PulsingBadge extends StatefulWidget {
 }
 
 class _PulsingBadgeState extends State<_PulsingBadge> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnim;
+  late final AnimationController _controller;
+  late final Animation<double> _scaleAnim;
 
   @override
   void initState() {
@@ -102,15 +158,10 @@ class _PulsingBadgeState extends State<_PulsingBadge> with SingleTickerProviderS
       duration: const Duration(milliseconds: 800),
     );
 
-    // Creamos un Tween que oscile de 0.95 a 1.05, para un “pulse”
-    _scaleAnim = Tween(begin: 0.95, end: 1.05).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeInOut,
-      ),
+    _scaleAnim = Tween<double>(begin: 0.95, end: 1.05).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
 
-    // Hacemos que se repita (reverse) indefinidamente
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         _controller.reverse();
@@ -119,23 +170,14 @@ class _PulsingBadgeState extends State<_PulsingBadge> with SingleTickerProviderS
       }
     });
 
-    // Solo pulsar si hay contenido
-    if (widget.count > 0) {
-      _controller.forward();
-    }
+    if (widget.count > 0) _controller.forward();
   }
 
   @override
   void didUpdateWidget(covariant _PulsingBadge oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Si el count pasa de 0 a >0, iniciamos la animación
-    if (oldWidget.count == 0 && widget.count > 0) {
-      _controller.forward();
-    }
-    // Si el count pasa a 0, paramos la animación
-    if (oldWidget.count > 0 && widget.count == 0) {
-      _controller.stop();
-    }
+    if (oldWidget.count == 0 && widget.count > 0) _controller.forward();
+    if (oldWidget.count > 0 && widget.count == 0) _controller.stop();
   }
 
   @override
@@ -157,10 +199,7 @@ class _PulsingBadgeState extends State<_PulsingBadge> with SingleTickerProviderS
         constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
         child: Text(
           '${widget.count}',
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 12,
-          ),
+          style: const TextStyle(color: Colors.white, fontSize: 12),
           textAlign: TextAlign.center,
         ),
       ),

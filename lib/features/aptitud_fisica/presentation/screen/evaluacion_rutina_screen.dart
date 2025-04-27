@@ -2,79 +2,37 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:paciente_app/core/data/services/plan_helper.dart';
 import 'package:paciente_app/features/aptitud_fisica/presentation/provider/aptitud_provider.dart';
+import 'package:paciente_app/features/create_account/presentation/provider/patient_provider.dart';
+import 'package:paciente_app/core/widgets/generic_evaluation_screen.dart';
 
-class EvaluacionRutinaScreen extends StatefulWidget {
+class EvaluacionRutinaScreen extends StatelessWidget {
   const EvaluacionRutinaScreen({Key? key}) : super(key: key);
-
-  @override
-  State<EvaluacionRutinaScreen> createState() => _EvaluacionRutinaScreenState();
-}
-
-class _EvaluacionRutinaScreenState extends State<EvaluacionRutinaScreen> {
-  final _formKey = GlobalKey<FormState>();
-  String _question1 = "";
-  String _question2 = "";
-  bool _question3YesNo = false;
 
   @override
   Widget build(BuildContext context) {
     final aptProv = context.watch<AptitudProvider>();
+    final activePlan = context.watch<PatientProvider>().patient.activePlan;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Evaluación de Rutina"),
-        backgroundColor: Colors.purple,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              const Text("Cuéntanos sobre tu actividad física y limitaciones.", style: TextStyle(fontSize: 14, color: Colors.black54)),
-              const SizedBox(height: 16),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: "¿Cuántas veces a la semana haces ejercicio?",
-                ),
-                onChanged: (val) => _question1 = val,
-                validator: (val) => (val == null || val.isEmpty) ? "Requerido" : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: "¿Tienes alguna restricción médica?",
-                ),
-                onChanged: (val) => _question2 = val,
-              ),
-              const SizedBox(height: 16),
-              CheckboxListTile(
-                title: const Text("¿Sientes fatiga al caminar distancias cortas?"),
-                value: _question3YesNo,
-                onChanged: (val) {
-                  setState(() => _question3YesNo = val ?? false);
-                },
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    aptProv.setEvaluationAnswer("q1", _question1);
-                    aptProv.setEvaluationAnswer("q2", _question2);
-                    aptProv.setEvaluationAnswer("q3", _question3YesNo);
-
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Evaluación guardada")));
-                    Navigator.pop(context);
-                  }
-                },
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.purple),
-                child: const Text("Enviar Evaluación"),
-              )
-            ],
-          ),
-        ),
-      ),
+    return GenericEvaluationScreen(
+      title: 'Evaluación de Rutina',
+      description: 'Cuéntanos sobre tu actividad física y limitaciones.',
+      question1Label: '¿Cuántas veces a la semana haces ejercicio?',
+      question2Label: '¿Tienes alguna restricción médica?',
+      question3Title: '¿Sientes fatiga al caminar distancias cortas?',
+      requireSubscription: true,
+      subscriptionCategory: 'Aptitud Física',
+      hasAccess: () => PlanHelper.userHasAccess(activePlan, 'Aptitud Física'),
+      onSubmit: (q1, q2, q3) {
+        aptProv.setEvaluationAnswer('q1', q1);
+        aptProv.setEvaluationAnswer('q2', q2);
+        aptProv.setEvaluationAnswer('q3', q3);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Evaluación guardada')),
+        );
+        Navigator.pop(context);
+      },
     );
   }
 }

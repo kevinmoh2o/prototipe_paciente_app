@@ -22,6 +22,6 @@ flutter build web --base-href="/prototipe_paciente_app/"
 Remove-Item docs -Recurse -Force
 xcopy .\build\web .\docs /E /H /C /I
 git add docs
-git commit -m "Add web build to docs"
+git commit -m "modify plans"
 git push origin main
 https://kevinmoh2o.github.io/prototipe_paciente_app/

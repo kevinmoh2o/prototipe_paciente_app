@@ -1,6 +1,7 @@
 // lib/features/menu_calendar/presentation/widget/wizard/calendar_wizard.dart
 import 'package:flutter/material.dart';
 import 'package:paciente_app/core/data/models/patient_model.dart';
+import 'package:paciente_app/core/widgets/premium_option_button.dart';
 import 'package:provider/provider.dart';
 
 import 'package:paciente_app/features/menu_calendar/presentation/provider/calendar_provider.dart';
@@ -234,6 +235,20 @@ class _StepConfirm extends StatelessWidget {
               ],
             ),
           const SizedBox(height: 24),
+          PremiumOptionButton(
+            title: 'Plan Premium',
+            price: 29.99,
+            color: const Color(0xFF5B6BF5),
+            icon: Icons.workspace_premium,
+            benefits: [
+              'Consultas ilimitadas',
+              'Recetas digitales',
+              'Soporte 24/7',
+            ],
+            onPressed: () {
+              // navegar a pago
+            },
+          ),
           _PrimaryButton(
             enabled: true,
             label: 'Confirmar Cita',
@@ -278,7 +293,9 @@ class _StepConfirm extends StatelessWidget {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const MainNavigationScreen(currentIndex: 0),
+                    builder: (_) => const MainNavigationScreen(
+                      initialTab: NavigationTab.home,
+                    ),
                   ),
                 );
               },
@@ -296,7 +313,7 @@ class _StepConfirm extends StatelessWidget {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const MainNavigationScreen(currentIndex: 4),
+                    builder: (_) => const MainNavigationScreen(initialTab: NavigationTab.cart),
                   ),
                 );
               },

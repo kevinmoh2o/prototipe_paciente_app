@@ -32,7 +32,7 @@ class MedicationScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => const MainNavigationScreen(currentIndex: 4),
+                  builder: (_) => const MainNavigationScreen(initialTab: NavigationTab.cart),
                 ),
               );
             },

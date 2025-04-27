@@ -145,7 +145,7 @@ class CategoriesGrid extends StatelessWidget {
                       ],
                     ),
                   ),
-                  if (needsUpgrade)
+                  /* if (needsUpgrade)
                     Positioned(
                       top: 6,
                       right: 6,
@@ -171,7 +171,7 @@ class CategoriesGrid extends StatelessWidget {
                           ],
                         ),
                       ),
-                    ),
+                    ), */
                 ],
               ),
             ),

@@ -23,6 +23,7 @@ class RutinasScreen extends StatelessWidget {
       iconColor: Colors.green,
       allRecommendations: miListaDeRutinas,
       patient: paciente, // para filtrar por diagnóstico
+      categoryTitle: "Aptitud Física",
     );
   }
 }

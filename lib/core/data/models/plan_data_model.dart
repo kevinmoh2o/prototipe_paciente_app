@@ -1,4 +1,3 @@
-// LiAsta de planes interna
 import 'package:flutter/material.dart';
 
 class PlanData {
@@ -21,4 +20,18 @@ class PlanData {
     required this.icon,
     required this.color,
   });
+
+  @override
+  String toString() {
+    return 'PlanData('
+        'title: $title, '
+        'price: \$${price.toStringAsFixed(2)}, '
+        'physicianPrice: \$${physicianPrice.toStringAsFixed(2)}, '
+        'discount: ${discount != null ? '${(discount! * 100).toStringAsFixed(0)}%' : '–'}, '
+        'description: $description, '
+        'benefits: ${benefits.join(', ')}, '
+        'icon: $icon, '
+        'color: $color'
+        ')';
+  }
 }

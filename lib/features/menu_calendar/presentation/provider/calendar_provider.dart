@@ -199,6 +199,11 @@ class CalendarProvider extends ChangeNotifier {
     }
   }
 
+  void deleteAppointment(String id) {
+    _allAppointments.removeWhere((a) => a.id == id);
+    notifyListeners();
+  }
+
   void resetNewAppointment() {
     _selectedDayTime = DayTime.maniana;
     _selectedHour = null;

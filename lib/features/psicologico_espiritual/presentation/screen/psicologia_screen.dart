@@ -8,13 +8,14 @@ import 'package:paciente_app/features/psicologico_espiritual/presentation/screen
 class PsicologiaScreen extends StatelessWidget {
   final bool isLocked;
   final VoidCallback? onUpgrade;
-  const PsicologiaScreen({Key? key, this.isLocked = false, this.onUpgrade}) : super(key: key);
+  final String category;
+  const PsicologiaScreen({super.key, this.isLocked = false, this.onUpgrade, required this.category});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Apoyo Psicológico y Espiritual"),
+        title: Text(category),
         backgroundColor: Colors.blue,
       ),
       body: Stack(
@@ -55,13 +56,13 @@ class PsicologiaScreen extends StatelessWidget {
                   color: Colors.orange,
                   onTap: () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const MainNavigationScreen(currentIndex: 1)),
+                    MaterialPageRoute(builder: (_) => const MainNavigationScreen(initialTab: NavigationTab.calendar)),
                   ),
                 ),
               ],
             ),
           ),
-          if (isLocked) ...[
+          /* if (isLocked) ...[
             ModalBarrier(
               color: Colors.black.withOpacity(0.55),
               dismissible: false,
@@ -106,11 +107,17 @@ class PsicologiaScreen extends StatelessWidget {
                                         )),
                               ),
                     ),
+                    PlanButtonsColumn(
+                      categoryTitle: "Apoyo Psicológico Espiritual",
+                      onPlanSelected: (plan) {
+                        // manejar selección
+                      },
+                    )
                   ],
                 ),
               ),
             ),
-          ],
+          ], */
         ],
       ),
     );

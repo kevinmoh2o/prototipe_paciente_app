@@ -55,7 +55,10 @@ class AptitudScreen extends StatelessWidget {
                   color: Colors.blueAccent,
                   onTap: () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const MainNavigationScreen(currentIndex: 1)),
+                    MaterialPageRoute(
+                        builder: (_) => const MainNavigationScreen(
+                              initialTab: NavigationTab.calendar,
+                            )),
                   ),
                 ),
               ],
@@ -63,7 +66,7 @@ class AptitudScreen extends StatelessWidget {
           ),
 
           // Capa de bloqueo + tarjeta upgrade
-          if (isLocked) ...[
+          /* if (isLocked) ...[
             // oscurece y bloquea el contenido
             ModalBarrier(
               color: Colors.black.withOpacity(0.55),
@@ -114,7 +117,7 @@ class AptitudScreen extends StatelessWidget {
                 ),
               ),
             ),
-          ],
+          ], */
         ],
       ),
     );

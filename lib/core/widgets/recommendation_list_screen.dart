@@ -1,21 +1,28 @@
+// lib/core/widgets/recommendation_list_screen.dart
 import 'package:flutter/material.dart';
+import 'package:paciente_app/core/data/services/plan_helper.dart';
+import 'package:provider/provider.dart';
+
 import 'package:paciente_app/core/data/models/patient_model.dart';
 import 'package:paciente_app/core/data/models/recommendation_model.dart';
 import 'package:paciente_app/core/widgets/recommendation_detail_screen.dart';
 
+import 'package:paciente_app/core/widgets/dialogs/upgrade_dialog.dart';
+import 'package:paciente_app/features/create_account/presentation/provider/patient_provider.dart';
+
 class RecommendationListScreen extends StatelessWidget {
   final String screenTitle;
-  final IconData iconData; // Ej. Icons.fitness_center, Icons.restaurant...
-  final Color iconBgColor; // Ej. Colors.green.shade50
-  final Color iconColor; // Ej. Colors.green
+  final String categoryTitle; // ⬅️ nuevo: categoría real para PlanHelper
+  final IconData iconData;
+  final Color iconBgColor;
+  final Color iconColor;
   final List<RecommendationModel> allRecommendations;
-
-  /// Paciente para filtrar. Si se deja null, se muestran todas.
   final PatientModel? patient;
 
   const RecommendationListScreen({
     Key? key,
     required this.screenTitle,
+    required this.categoryTitle,
     required this.iconData,
     required this.iconBgColor,
     required this.iconColor,
@@ -23,10 +30,18 @@ class RecommendationListScreen extends StatelessWidget {
     this.patient,
   }) : super(key: key);
 
+  void _promptUpgrade(BuildContext ctx) {
+    DialogHelper.showUpgradeDialog(
+      context: ctx,
+      categoryTitle: categoryTitle,
+      description: 'Elige el plan que mejor se adapte a ti para continuar con tu proceso:',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // ────────── Filtra según diagnóstico, si patient != null
-    final filteredRecommendations = _filterByDiagnosis(allRecommendations, patient);
+    // filtra por diagnóstico si se pasa paciente
+    final filtered = _filterByDiagnosis(allRecommendations, patient);
 
     return Scaffold(
       appBar: AppBar(
@@ -35,10 +50,9 @@ class RecommendationListScreen extends StatelessWidget {
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(16),
-        itemCount: filteredRecommendations.length,
+        itemCount: filtered.length,
         itemBuilder: (ctx, i) {
-          final recommendation = filteredRecommendations[i];
-
+          final rec = filtered[i];
           return Container(
             margin: const EdgeInsets.only(bottom: 12),
             padding: const EdgeInsets.all(12),
@@ -50,12 +64,12 @@ class RecommendationListScreen extends StatelessWidget {
                   color: Colors.black.withOpacity(0.05),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
-                )
+                ),
               ],
             ),
             child: Row(
               children: [
-                // Ícono a la izquierda
+                // icono
                 Container(
                   width: 60,
                   height: 60,
@@ -66,37 +80,36 @@ class RecommendationListScreen extends StatelessWidget {
                   child: Icon(iconData, color: iconColor),
                 ),
                 const SizedBox(width: 12),
-
-                // Título + breve descripción
+                // título + descripción
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        recommendation.title,
-                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                      ),
+                      Text(rec.title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 4),
-                      Text(
-                        recommendation.shortDescription,
-                        style: const TextStyle(fontSize: 14),
-                      ),
+                      Text(rec.shortDescription, style: const TextStyle(fontSize: 14)),
                     ],
                   ),
                 ),
-
-                // Botón "Ver" que abre el detalle
+                // botón VER
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.teal),
+                  child: const Text('Ver', style: TextStyle(color: Colors.white)),
                   onPressed: () {
-                    // Navega a la pantalla de detalle
+                    final activePlan = context.read<PatientProvider>().patient.activePlan;
+                    final allowed = PlanHelper.userHasAccess(activePlan, categoryTitle);
+
+                    if (!allowed) {
+                      _promptUpgrade(context);
+                      return;
+                    }
+
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (_) => RecommendationDetailScreen(recommendation: recommendation),
+                        builder: (_) => RecommendationDetailScreen(recommendation: rec),
                       ),
                     );
                   },
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.teal),
-                  child: const Text("Ver", style: TextStyle(color: Colors.white)),
                 ),
               ],
             ),
@@ -106,20 +119,12 @@ class RecommendationListScreen extends StatelessWidget {
     );
   }
 
-  /// Filtra las recomendaciones si targetDiagnoses no está vacío
-  /// y el diagnostico del paciente no coincide.
-  List<RecommendationModel> _filterByDiagnosis(
-    List<RecommendationModel> list,
-    PatientModel? patient,
-  ) {
-    if (patient == null || patient.diagnostico == null) {
-      return list; // Sin paciente o sin diagnóstico => no filtrar
-    }
-
-    final diag = patient.diagnostico!.toLowerCase().trim();
+  // ─────────────────────────────────────────────────────────────
+  List<RecommendationModel> _filterByDiagnosis(List<RecommendationModel> list, PatientModel? patient) {
+    if (patient?.diagnostico == null) return list;
+    final diag = patient!.diagnostico!.toLowerCase().trim();
     return list.where((item) {
       if (item.targetDiagnoses.isEmpty) return true;
-      // Si la lista no está vacía, chequea si el diag del paciente coincide
       return item.targetDiagnoses.map((d) => d.toLowerCase().trim()).contains(diag);
     }).toList();
   }

@@ -120,7 +120,7 @@ class _StepConfirm extends StatelessWidget {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const MainNavigationScreen(currentIndex: 4),
+                    builder: (_) => const MainNavigationScreen(initialTab: NavigationTab.cart),
                   ),
                 );
               },
